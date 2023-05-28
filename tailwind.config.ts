@@ -6,6 +6,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        black: "#0E1010",
         ...sand,
         ...orange,
       },

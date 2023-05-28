@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import "@fontsource/space-mono";
+import "@fontsource/space-mono/400.css";
+import "@fontsource/space-mono/700.css";
 import { type AppType } from "next/app";
 import Head from "next/head";
 import { Header } from "~/components/header";
