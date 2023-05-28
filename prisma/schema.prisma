@@ -8,10 +8,13 @@ datasource db {
     relationMode = "prisma"
 }
 
-model User {
+model BarStaff {
     id      String @id @default(cuid())
-    clerkId String @unique
-    bars    Bar[]
+    staffId String @map("staff_id")
+    barId   String @map("bar_id")
+    bar     Bar    @relation(fields: [barId], references: [id])
+
+    @@index([barId])
 }
 
 model Bar {
@@ -26,7 +29,7 @@ model Bar {
     url          String?
     updated      DateTime
     verified     Boolean       @default(false)
-    staff        User[]
+    staff        BarStaff[]
     beverages    BarBeverage[]
 }
 
