@@ -8,8 +8,87 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model User {
+    id      String @id @default(cuid())
+    clerkId String @unique
+    bars    Bar[]
+}
+
+model Bar {
+    id           String        @id @default(cuid())
+    name         String
+    line1        String
+    line2        String?
+    city         String
+    postcode     String
+    location     Json
+    openingHours Json          @map("opening_hours")
+    url          String?
+    updated      DateTime
+    verified     Boolean       @default(false)
+    staff        User[]
+    beverages    BarBeverage[]
+}
+
+enum BeverageStyle {
+    APA
+    BITTER
+    BLONDE
+    BOCK
+    BROWN_ALE
+    CIDER
+    CREAM_ALE
+    DARK_ALE
+    DIPA
+    FRUIT_BEER
+    GOLDEN_ALE
+    GOSE
+    IMPERIAL_PORTER
+    IMPERIAL_STOUT
+    IPA
+    LAGER
+    NEIPA
+    PALE_ALE
+    PILSNER
+    PORTER
+    SOUR
+    SOUR_IPA
+    STOUT
+    TABLE_BEER
+    TIPA
+    WHEAT_BEER
+}
+
+model Beverage {
+    id          String        @id @default(cuid())
+    name        String
+    abv         Decimal
+    style       BeverageStyle
+    breweryId   String        @map("brewery_id")
+    brewery     Brewery       @relation(fields: [breweryId], references: [id])
+    verified    Boolean       @default(false)
+    BarBeverage BarBeverage[]
+
+    @@index([breweryId])
+}
+
+model Brewery {
+    id        String     @id @default(cuid())
+    name      String
+    url       String?
+    location  Json
+    beverages Beverage[]
+}
+
+model BarBeverage {
+    bar        Bar       @relation(fields: [barId], references: [id])
+    barId      String    @map("bar_id")
+    beverage   Beverage  @relation(fields: [beverageId], references: [id])
+    beverageId String    @map("beverage_id")
+    tappedOn   DateTime  @default(now())
+    tappedOff  DateTime?
+
+    @@id([barId, beverageId])
+    @@index([barId])
+    @@index([beverageId])
 }
