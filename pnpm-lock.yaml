@@ -4,6 +4,9 @@ dependencies:
   '@clerk/nextjs':
     specifier: ^4.19.0
     version: 4.19.0(next@13.4.2)(react-dom@18.2.0)(react@18.2.0)
+  '@fontsource/space-mono':
+    specifier: ^5.0.1
+    version: 5.0.1
   '@prisma/client':
     specifier: ^4.14.0
     version: 4.14.0(prisma@4.14.0)
@@ -240,6 +243,10 @@ packages:
       '@floating-ui/dom': 1.2.8
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@fontsource/space-mono@5.0.1:
+    resolution: {integrity: sha512-BkGYKa7lXF2vpcZg4Cf5XnUEDOjEeLZ++nL3ut5Yzgm9KT2U+iRDeAldzrENsVm+oWgXc6xDtD+Cb6eYPPFvAw==}
     dev: false
 
   /@humanwhocodes/config-array@0.11.8:

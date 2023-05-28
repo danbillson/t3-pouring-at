@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Space Mono", system-ui, sans-serif;
+    color: #0e1010;
+    background-color: #fef9f8;
+  }
+
+  .btn {
+    @apply inline-block bg-black px-4 py-2 text-white;
+  }
+}
