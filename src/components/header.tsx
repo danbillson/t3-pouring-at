@@ -1,5 +1,6 @@
-import { SignInButton, SignOutButton, useAuth } from "@clerk/nextjs";
+import { SignInButton, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
+import { LoggedInDropdown } from "~/components/logged-in-dropdown";
 
 export const Header = () => {
   const { isSignedIn } = useAuth();
@@ -8,7 +9,7 @@ export const Header = () => {
       <Link href="/" className="text-xl font-bold">
         Fresh on Tap
       </Link>
-      {isSignedIn ? <SignOutButton /> : <SignInButton />}
+      {isSignedIn ? <LoggedInDropdown /> : <SignInButton />}
     </header>
   );
 };
