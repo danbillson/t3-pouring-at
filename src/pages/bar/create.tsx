@@ -1,8 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type NextPage } from "next";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Layout } from "~/components/layout";
+import { api } from "~/utils/api";
 
 const schema = z.object({
   name: z.string().min(2, { message: "Please enter the name of your bar" }),
@@ -19,7 +21,15 @@ const schema = z.object({
       message: "Please enter a valid postcode",
     })
     .nonempty({ message: "Please enter the postcode of your bar" }),
-  openingHours: z.record(z.string().nonempty()).optional(),
+  openingHours: z.object({
+    monday: z.string().optional(),
+    tuesday: z.string().optional(),
+    wednesday: z.string().optional(),
+    thursday: z.string().optional(),
+    friday: z.string().optional(),
+    saturday: z.string().optional(),
+    sunday: z.string().optional(),
+  }),
   url: z
     .string()
     .url({ message: "Please enter a valid url" })
@@ -30,6 +40,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 const CreateBar: NextPage = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -38,8 +49,14 @@ const CreateBar: NextPage = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const { mutateAsync } = api.bars.create.useMutation({
+    onSuccess: (data) => {
+      void router.push(`/bar/${data.bar.id}`);
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    await mutateAsync(data);
   };
 
   return (
@@ -118,9 +135,7 @@ const CreateBar: NextPage = () => {
               className="w-full border-2 border-solid border-black px-4 py-2"
               placeholder="NE1 7JG"
               autoComplete="off"
-              {...register("city", {
-                pattern: /^[a-z]{1,2}\d[a-z\d]?\s*\d[a-z]{2}$/i,
-              })}
+              {...register("postcode")}
             />
             {errors.postcode && (
               <p className="mt-2 text-xs italic text-red-500">
@@ -140,7 +155,7 @@ const CreateBar: NextPage = () => {
             {days.map((day) => (
               <div key={day} className="flex flex-col">
                 <label
-                  className="text-slate-500"
+                  className="text-slate-500 first-letter:uppercase"
                   htmlFor={`openingHours.${day}`}
                 >
                   {day}
@@ -185,11 +200,11 @@ const CreateBar: NextPage = () => {
 export default CreateBar;
 
 const days = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+] as const;
