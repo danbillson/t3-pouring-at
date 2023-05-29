@@ -19,7 +19,7 @@ const Manage: NextPage = () => {
 
   return (
     <Layout>
-      <div className="text-2xl font-bold">Your Bars</div>
+      <h2 className="text-2xl font-bold">Your Bars</h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {data.bars.map((bar) => (
           <Link
