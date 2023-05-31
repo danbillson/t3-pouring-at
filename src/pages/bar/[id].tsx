@@ -15,10 +15,11 @@ const Bar: NextPage<{ id: string }> = ({ id }) => {
   const location = bar.location as { lat: number; lon: number };
 
   return (
-    <Layout>
-      <h1 className="text-2xl font-bold">{bar.name}</h1>
-
-      <div className="h-96 w-full py-4">
+    <>
+      <Layout>
+        <h1 className="text-2xl font-bold">{bar.name}</h1>
+      </Layout>
+      <div className="h-96 w-screen py-4">
         <Map
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
           defaultCenter={{ lat: location.lat, lng: location.lon }}
@@ -27,7 +28,7 @@ const Bar: NextPage<{ id: string }> = ({ id }) => {
           <Marker bar={bar} />
         </Map>
       </div>
-    </Layout>
+    </>
   );
 };
 
