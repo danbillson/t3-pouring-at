@@ -1,6 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const barsRouter = createTRPCRouter({
   getByUserId: protectedProcedure
@@ -18,6 +22,26 @@ export const barsRouter = createTRPCRouter({
 
       return {
         bars,
+      };
+    }),
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const bar = await ctx.prisma.bar.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!bar) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bar not found",
+        });
+      }
+
+      return {
+        bar,
       };
     }),
   create: protectedProcedure
