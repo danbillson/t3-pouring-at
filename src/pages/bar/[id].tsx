@@ -25,7 +25,7 @@ const Bar: NextPage<{ id: string }> = ({ id }) => {
           defaultCenter={{ lat: location.lat, lng: location.lon }}
           defaultZoom={17}
         >
-          <Marker bar={bar} />
+          <Marker bar={bar} lat={location.lat} lng={location.lon} />
         </Map>
       </div>
     </>

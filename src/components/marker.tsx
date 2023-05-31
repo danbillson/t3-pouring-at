@@ -5,17 +5,14 @@ import Link from "next/link";
 
 type MarkerProps = {
   bar: Bar;
+  // lat and lng and required by google-maps-react-markers but not used
+  lat: number;
+  lng: number;
 };
 
 export const Marker = ({ bar }: MarkerProps) => {
-  const location = bar.location as { lat: number; lon: number };
-
   return (
-    <HoverCard.Root
-      // @ts-expect-error - google-maps-react-markers adds lat and lng
-      lat={location.lat}
-      lng={location.lon}
-    >
+    <HoverCard.Root>
       <HoverCard.Trigger>
         <Link href={`/bar/${bar.id}`}>
           <Avatar.Root className="inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full bg-slate-900 align-middle">
