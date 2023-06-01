@@ -31,6 +31,9 @@ export const barsRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          staff: true,
+        },
       });
 
       if (!bar) {
