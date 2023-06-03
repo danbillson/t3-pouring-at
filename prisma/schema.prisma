@@ -20,6 +20,7 @@ model BarStaff {
 model Bar {
     id           String        @id @default(cuid())
     name         String
+    slug         String        @unique
     line1        String
     line2        String?
     city         String

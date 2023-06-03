@@ -1,13 +1,24 @@
+import { clerkClient, getAuth } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { type UseFormSetValue, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Layout } from "~/components/layout";
 import { api } from "~/utils/api";
 
 const schema = z.object({
-  name: z.string().min(2, { message: "Please enter the name of your bar" }),
+  name: z
+    .string()
+    .nonempty({ message: "Please enter the name of your bar" })
+    .min(2, { message: "The name of your bar must be at least 2 characters" }),
+  slug: z
+    .string()
+    .nonempty({ message: "Please enter a slug" })
+    .min(2, { message: "Your slug must be at least 2 characters" })
+    .regex(/^[a-zA-Z0-9-]+$/i, {
+      message: "Your slug can only contain letters, numbers and dashes",
+    }),
   line1: z
     .string()
     .nonempty({ message: "Please enter the first line of the address" }),
@@ -39,29 +50,59 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const CreateBar: NextPage = () => {
+type CreateBarProps = {
+  userIsAdmin: boolean;
+};
+
+const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
   const router = useRouter();
   const {
     register,
+    watch,
     handleSubmit,
+    setError,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
+  const slug = watch("slug");
 
-  const { mutateAsync } = api.bars.create.useMutation({
+  const { mutate, isLoading } = api.bars.create.useMutation({
     onSuccess: (data) => {
       void router.push(`/bar/${data.bar.id}`);
     },
+    onError: (error) => {
+      if (error.message === "Invalid postcode") {
+        setError("postcode", {
+          type: "focus",
+          message: `Sorry, we couldn't find that postcode. Please try again.`,
+        });
+      }
+      if (error.message.includes("Unique constraint")) {
+        setError("slug", {
+          type: "focus",
+          message: `Sorry, that slug is already taken. Please try a different slug.`,
+        });
+      }
+    },
   });
 
-  const onSubmit = async (data: FormValues) => {
-    await mutateAsync(data);
+  const onSubmit = (data: FormValues) => {
+    mutate(data);
   };
 
   return (
     <Layout>
       <h2 className="text-center text-2xl font-bold">Tell us about your bar</h2>
+      {userIsAdmin && (
+        <button
+          className="btn mx-auto w-fit"
+          onClick={() => autofill(setValue)}
+        >
+          Autofill
+        </button>
+      )}
       <form
         className="mx-auto grid w-full max-w-sm gap-4 lg:max-w-3xl"
         /* eslint-disable-next-line */
@@ -79,6 +120,26 @@ const CreateBar: NextPage = () => {
             {errors.name && (
               <p className="mt-2 text-xs italic text-red-500">
                 {errors.name?.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="slug">Slug</label>
+            <input
+              className="w-full border-2 border-solid border-black px-4 py-2"
+              placeholder="wobbly-duck"
+              autoComplete="off"
+              {...register("slug")}
+            />
+            {slug && (
+              <p className="mt-2 text-xs italic text-slate-500">
+                https://pouring.at/{slug}
+              </p>
+            )}
+            {errors.slug && (
+              <p className="mt-2 text-xs italic text-red-500">
+                {errors.slug?.message}
               </p>
             )}
           </div>
@@ -191,10 +252,19 @@ const CreateBar: NextPage = () => {
           </div>
         </div>
 
-        <input className="btn mt-4 w-fit" type="submit" />
+        <button className="btn mt-4 w-fit" disabled={isLoading} type="submit">
+          {isLoading ? "Creating bar..." : "Submit"}
+        </button>
       </form>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { userId } = getAuth(context.req);
+  const user = userId ? await clerkClient.users.getUser(userId) : undefined;
+
+  return { props: { userIsAdmin: user?.privateMetadata?.role === "admin" } };
 };
 
 export default CreateBar;
@@ -208,3 +278,19 @@ const days = [
   "saturday",
   "sunday",
 ] as const;
+
+const autofill = (setValue: UseFormSetValue<FormValues>) => {
+  setValue("name", "The Wobbly Duck");
+  setValue("slug", "wobbly-duck");
+  setValue("line1", "4 Old Eldon Square");
+  setValue("city", "Newcastle upon Tyne");
+  setValue("postcode", "NE1 7JG");
+  setValue("url", "https://wobblyduck.co.uk/");
+  setValue("openingHours.monday", "12 - 11pm");
+  setValue("openingHours.tuesday", "12 - 11pm");
+  setValue("openingHours.wednesday", "12 - 11pm");
+  setValue("openingHours.thursday", "12 - 11pm");
+  setValue("openingHours.friday", "12 - 11pm");
+  setValue("openingHours.saturday", "12 - 11pm");
+  setValue("openingHours.sunday", "12 - 11pm");
+};

@@ -51,6 +51,10 @@ export const barsRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(2),
+        slug: z
+          .string()
+          .min(2)
+          .regex(/^[a-zA-Z0-9-]+$/i),
         line1: z.string(),
         line2: z.string().optional(),
         city: z.string(),
@@ -88,6 +92,7 @@ export const barsRouter = createTRPCRouter({
       const bar = await ctx.prisma.bar.create({
         data: {
           name: input.name,
+          slug: input.slug,
           line1: input.line1,
           line2: input.line2,
           city: input.city,
