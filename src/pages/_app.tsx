@@ -11,7 +11,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <title>Fresh on Tap</title>
+        <title>Pouring at</title>
         <meta
           name="description"
           content="Find your favourite and best beers near you"

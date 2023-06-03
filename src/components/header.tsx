@@ -7,7 +7,7 @@ export const Header = () => {
   return (
     <header className="mx-auto flex max-w-6xl justify-between p-8">
       <Link href="/" className="text-xl font-bold">
-        Fresh on Tap
+        Pouring at ...
       </Link>
       {isSignedIn ? <LoggedInDropdown /> : <SignInButton />}
     </header>
