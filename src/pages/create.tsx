@@ -70,7 +70,7 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
 
   const { mutate, isLoading } = api.bars.create.useMutation({
     onSuccess: (data) => {
-      void router.push(`/bar/${data.bar.id}`);
+      void router.push(`/${data.bar.slug}`);
     },
     onError: (error) => {
       if (error.message === "Invalid postcode") {

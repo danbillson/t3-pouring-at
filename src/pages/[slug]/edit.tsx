@@ -1,23 +1,22 @@
-import { useAuth } from "@clerk/nextjs";
+import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
 import Map from "google-maps-react-markers";
-import type { GetStaticProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
-import { generateSSGHelper } from "~/server/helpers/ssgHelper";
+import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 
-const Bar: NextPage<{ id: string }> = ({ id }) => {
-  const { data } = api.bars.getById.useQuery({ id });
-  const { userId } = useAuth();
+const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
+  const { data, isLoading, isError } = api.bars.getBySlug.useQuery({ slug });
 
-  if (!data) return <Layout>Sorry, we couldn&apos;t find this bar</Layout>;
+  if (isError) return <Layout>Sorry, something went wrong</Layout>;
+
+  if (isLoading || !data) return <Layout>Pouring...</Layout>;
 
   const { bar } = data;
 
   const location = bar.location as { lat: number; lon: number };
-
-  const isOwner = bar.staff.some(({ staffId }) => staffId === userId);
 
   return (
     <>
@@ -31,11 +30,10 @@ const Bar: NextPage<{ id: string }> = ({ id }) => {
                 {bar.postcode}
               </p>
             </div>
-            {isOwner && (
-              <Link href={`/bar/${bar.id}/edit`} className="btn h-fit">
-                Edit
-              </Link>
-            )}
+
+            <Link href={`/${bar.slug}`} className="btn h-fit">
+              Back
+            </Link>
           </div>
           <h3 className="mt-8 text-xl font-bold">Tap list</h3>
         </div>
@@ -54,25 +52,40 @@ const Bar: NextPage<{ id: string }> = ({ id }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = generateSSGHelper();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { userId } = getAuth(context.req);
 
-  const id = context.params?.id;
+  if (!userId) {
+    return {
+      redirect: {
+        destination: `/sign-in`,
+        permanent: false,
+      },
+    };
+  }
 
-  if (typeof id !== "string") throw new Error("no id");
-
-  await ssg.bars.getById.prefetch({ id });
-
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-      id,
+  const slug = context.params?.slug as string;
+  const bar = await prisma.bar.findFirst({
+    where: {
+      slug,
+      staff: {
+        some: {
+          staffId: userId,
+        },
+      },
     },
-  };
+  });
+
+  if (!bar) {
+    return {
+      redirect: {
+        destination: `/${slug}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: { ...buildClerkProps(context.req), slug } };
 };
 
-export const getStaticPaths = () => {
-  return { paths: [], fallback: "blocking" };
-};
-
-export default Bar;
+export default BarEdit;

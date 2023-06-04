@@ -47,6 +47,29 @@ export const barsRouter = createTRPCRouter({
         bar,
       };
     }),
+  getBySlug: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const bar = await ctx.prisma.bar.findUnique({
+        where: {
+          slug: input.slug,
+        },
+        include: {
+          staff: true,
+        },
+      });
+
+      if (!bar) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bar not found",
+        });
+      }
+
+      return {
+        bar,
+      };
+    }),
   create: protectedProcedure
     .input(
       z.object({

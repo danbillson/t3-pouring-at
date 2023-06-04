@@ -24,7 +24,7 @@ const Manage: NextPage = () => {
         {data.bars.map((bar) => (
           <Link
             key={bar.id}
-            href={`/bar/${bar.id}`}
+            href={`/${bar.slug}`}
             className="flex flex-col border border-black p-4 text-slate-600"
           >
             <span className="text-xl font-bold text-black">{bar.name}</span>
