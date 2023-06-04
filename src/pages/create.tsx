@@ -73,6 +73,12 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
       void router.push(`/${data.bar.slug}`);
     },
     onError: (error) => {
+      if (error.message === "Reserved slug") {
+        setError("slug", {
+          type: "focus",
+          message: `Sorry, that slug is reserved. Please try a different slug.`,
+        });
+      }
       if (error.message === "Invalid postcode") {
         setError("postcode", {
           type: "focus",

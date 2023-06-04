@@ -95,6 +95,13 @@ export const barsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (reserverdSlugs.includes(input.slug)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Reserved slug",
+        });
+      }
+
       const locationRes = await fetch(
         `https://api.postcodes.io/postcodes/${input.postcode}`
       );
@@ -146,3 +153,17 @@ type PostcodesResponse = {
     latitude: number;
   };
 };
+
+const reserverdSlugs = [
+  "api",
+  "dashboard",
+  "admin",
+  "sign-in",
+  "sign-out",
+  "sign-up",
+  "account",
+  "settings",
+  "create",
+  "manage",
+  "edit",
+];

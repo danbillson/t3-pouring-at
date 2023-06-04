@@ -34,7 +34,7 @@ const Manage: NextPage = () => {
             <span>{bar.postcode}</span>
           </Link>
         ))}
-        <Link href="/bar/create" className="border border-black p-4">
+        <Link href="/create" className="border border-black p-4">
           <span className="flex items-center gap-2 align-middle text-xl font-bold">
             <PlusIcon />
             Add new bar
