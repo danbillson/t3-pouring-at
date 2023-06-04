@@ -1,6 +1,7 @@
 import { useAuth } from "@clerk/nextjs";
 import Map from "google-maps-react-markers";
 import type { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
@@ -21,6 +22,14 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
 
   return (
     <>
+      <Head>
+        <title>Pouring at {bar.name}</title>
+        <meta
+          name="description"
+          content={`See all of the beers pouring at ${bar.name}`}
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <main className="mx-auto flex max-w-6xl flex-col">
         <div className="flex w-full flex-col px-8 py-16">
           <div className="flex justify-between">
