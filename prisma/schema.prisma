@@ -80,7 +80,7 @@ model Brewery {
     id        String     @id @default(cuid())
     name      String
     url       String?
-    location  Json
+    location  Json?
     beverages Beverage[]
 }
 
