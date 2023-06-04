@@ -1,17 +1,19 @@
 import { SignInButton, useAuth } from "@clerk/nextjs";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { LoggedInDropdown } from "~/components/logged-in-dropdown";
+import { api } from "~/utils/api";
 
-type HeaderProps = {
-  barName?: string;
-};
-
-export const Header = ({ barName }: HeaderProps) => {
+export const Header = () => {
   const { isSignedIn } = useAuth();
+  const router = useRouter();
+  const slug = router.query.slug as string;
+  const { data } = api.bars.getBySlug.useQuery({ slug }, { enabled: !!slug });
+
   return (
     <header className="mx-auto flex max-w-6xl justify-between p-8">
       <Link href="/" className="text-xl font-bold">
-        Pouring at {barName || "..."}
+        Pouring at {data?.bar.name || "..."}
       </Link>
       {isSignedIn ? <LoggedInDropdown /> : <SignInButton />}
     </header>
