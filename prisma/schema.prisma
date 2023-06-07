@@ -34,40 +34,11 @@ model Bar {
     beverages    BarBeverage[]
 }
 
-enum BeverageStyle {
-    APA
-    BITTER
-    BLONDE
-    BOCK
-    BROWN_ALE
-    CIDER
-    CREAM_ALE
-    DARK_ALE
-    DIPA
-    FRUIT_BEER
-    GOLDEN_ALE
-    GOSE
-    IMPERIAL_PORTER
-    IMPERIAL_STOUT
-    IPA
-    LAGER
-    NEIPA
-    PALE_ALE
-    PILSNER
-    PORTER
-    SOUR
-    SOUR_IPA
-    STOUT
-    TABLE_BEER
-    TIPA
-    WHEAT_BEER
-}
-
 model Beverage {
     id          String        @id @default(cuid())
     name        String
     abv         Decimal
-    style       BeverageStyle
+    style       String
     breweryId   String        @map("brewery_id")
     brewery     Brewery       @relation(fields: [breweryId], references: [id])
     verified    Boolean       @default(false)

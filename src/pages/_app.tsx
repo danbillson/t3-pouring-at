@@ -19,8 +19,10 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ClerkProvider {...pageProps}>
-        <Header />
-        <Component {...pageProps} />
+        <div className="min-h-screen">
+          <Header />
+          <Component {...pageProps} />
+        </div>
       </ClerkProvider>
     </>
   );
