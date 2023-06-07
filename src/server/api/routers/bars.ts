@@ -56,6 +56,21 @@ export const barsRouter = createTRPCRouter({
         },
         include: {
           staff: true,
+          beverages: {
+            where: {
+              tappedOff: null,
+            },
+            include: {
+              beverage: {
+                include: {
+                  brewery: true,
+                },
+              },
+            },
+            orderBy: {
+              tappedOn: "desc",
+            },
+          },
         },
       });
 

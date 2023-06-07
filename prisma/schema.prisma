@@ -37,7 +37,7 @@ model Bar {
 model Beverage {
     id          String        @id @default(cuid())
     name        String
-    abv         Decimal
+    abv         String
     style       String
     breweryId   String        @map("brewery_id")
     brewery     Brewery       @relation(fields: [breweryId], references: [id])

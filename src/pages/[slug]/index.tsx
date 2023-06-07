@@ -3,6 +3,7 @@ import Map from "google-maps-react-markers";
 import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { BeverageList } from "~/components/beverage-list";
 import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
@@ -46,7 +47,9 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
               </Link>
             )}
           </div>
+
           <h3 className="mt-8 text-xl font-bold">Tap list</h3>
+          <BeverageList beverages={bar.beverages} />
         </div>
       </main>
 
