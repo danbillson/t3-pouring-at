@@ -49,7 +49,7 @@ model Beverage {
 
 model Brewery {
     id        String     @id @default(cuid())
-    name      String
+    name      String     @unique
     url       String?
     location  Json?
     beverages Beverage[]
