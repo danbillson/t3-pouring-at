@@ -158,6 +158,36 @@ export const barsRouter = createTRPCRouter({
         bar,
       };
     }),
+  getAllUnverified: protectedProcedure.query(async ({ ctx }) => {
+    const bars = await ctx.prisma.bar.findMany({
+      where: {
+        verified: false,
+      },
+      include: {
+        staff: true,
+      },
+    });
+
+    return {
+      bars,
+    };
+  }),
+  verify: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const bar = await ctx.prisma.bar.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          verified: true,
+        },
+      });
+
+      return {
+        bar,
+      };
+    }),
 });
 
 type PostcodesResponse = {
