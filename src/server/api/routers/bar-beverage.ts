@@ -23,7 +23,7 @@ export const barBeverageRouter = createTRPCRouter({
           beverage: {
             create: {
               name: input.name,
-              abv: input.abv,
+              abv: String(input.abv),
               style: input.style,
               brewery: {
                 connectOrCreate: {
