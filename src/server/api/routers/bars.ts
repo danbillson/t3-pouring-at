@@ -195,15 +195,6 @@ export const barsRouter = createTRPCRouter({
     }),
 });
 
-type PostcodesResponse = {
-  status: number;
-  result: {
-    postcode: string;
-    longitude: number;
-    latitude: number;
-  };
-};
-
 const reserverdSlugs = [
   "api",
   "dashboard",
@@ -216,4 +207,5 @@ const reserverdSlugs = [
   "create",
   "manage",
   "edit",
+  "search",
 ];
