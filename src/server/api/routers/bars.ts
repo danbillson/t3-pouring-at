@@ -1,10 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { geocode } from "~/utils/maps";
 
 export const barsRouter = createTRPCRouter({
   getByUserId: protectedProcedure
@@ -117,21 +119,24 @@ export const barsRouter = createTRPCRouter({
         });
       }
 
-      const locationRes = await fetch(
-        `https://api.postcodes.io/postcodes/${input.postcode}`
+      const { results, status } = await geocode(
+        `${input.line1},${input.line2 ? ` ${input.line2} ,` : ""} ${
+          input.city
+        }, ${input.postcode}`,
+        env.GOOGLE_MAPS_SERVER_KEY
       );
-      const locationObj = (await locationRes.json()) as PostcodesResponse;
 
-      if (locationObj.status !== 200) {
+      if (status !== "OK" || !results.length || !results[0]) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid postcode",
+          message: "Invalid address",
         });
       }
 
+      const [result] = results;
       const location = {
-        lon: locationObj.result.longitude,
-        lat: locationObj.result.latitude,
+        lng: result.geometry.location.lng,
+        lat: result.geometry.location.lat,
       };
 
       const bar = await ctx.prisma.bar.create({

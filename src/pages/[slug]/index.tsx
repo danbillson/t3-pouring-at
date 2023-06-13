@@ -17,7 +17,7 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
 
   const { bar } = data;
 
-  const location = bar.location as { lat: number; lon: number };
+  const location = bar.location as { lat: number; lng: number };
 
   const isOwner = bar.staff.some(({ staffId }) => staffId === userId);
 
@@ -56,10 +56,10 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
       <div className="h-96 w-screen py-4">
         <Map
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-          defaultCenter={{ lat: location.lat, lng: location.lon }}
+          defaultCenter={{ lat: location.lat, lng: location.lng }}
           defaultZoom={17}
         >
-          <Marker bar={bar} lat={location.lat} lng={location.lon} />
+          <Marker bar={bar} lat={location.lat} lng={location.lng} />
         </Map>
       </div>
     </>
