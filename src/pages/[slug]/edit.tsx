@@ -49,7 +49,13 @@ const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
           <AddBeverage bar={bar} />
 
           <h3 className="mt-8 text-xl font-bold">Tap list</h3>
-          <BeverageList beverages={bar.beverages} edit />
+          {bar.beverages.length === 0 ? (
+            <p className="text-slate-600">
+              Nothing added yet, use the form above to add a beverage
+            </p>
+          ) : (
+            <BeverageList beverages={bar.beverages} edit />
+          )}
         </div>
       </main>
 

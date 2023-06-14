@@ -47,7 +47,13 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
           </div>
 
           <h3 className="mt-8 text-xl font-bold">Tap list</h3>
-          <BeverageList beverages={bar.beverages} />
+          {bar.beverages.length === 0 ? (
+            <p className="text-slate-600">
+              Nothing listed at {bar.name} yet, check back soon 🍺
+            </p>
+          ) : (
+            <BeverageList beverages={bar.beverages} edit />
+          )}
         </div>
       </main>
 
