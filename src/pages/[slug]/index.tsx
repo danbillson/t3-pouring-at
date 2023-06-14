@@ -52,7 +52,7 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
               Nothing listed at {bar.name} yet, check back soon 🍺
             </p>
           ) : (
-            <BeverageList beverages={bar.beverages} edit />
+            <BeverageList beverages={bar.beverages} />
           )}
         </div>
       </main>

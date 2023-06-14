@@ -87,7 +87,7 @@ const Search: NextPage = () => {
 
                   <Link
                     href={`/${bar.slug}`}
-                    className="mt-2 text-sm font-bold text-slate-800 underline"
+                    className="mt-2 w-fit text-sm font-bold text-slate-800 underline"
                   >
                     View more
                   </Link>

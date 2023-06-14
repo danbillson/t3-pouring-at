@@ -28,25 +28,27 @@ export const BeverageList = ({ beverages, edit }: BeverageListProps) => {
               isLoading && variables?.beverageId === beverageId
                 ? "border-red-500"
                 : "border-black"
-            } px-4 py-2`}
+            } flex flex-col justify-between px-4 py-2`}
           >
             <div>
-              <span className="mr-2 text-lg font-bold">
-                {beverage.brewery.name}
+              <div>
+                <p className="mr-2 text-lg">
+                  {beverage.brewery.name}{" "}
+                  <span className="font-bold">{beverage.name}</span>
+                </p>
+              </div>
+              <div>
+                <span className="mr-2 text-sm">
+                  {String(beverage.abv)}%
+                  <span className="mx-1 text-xs text-slate-500">ABV</span>
+                </span>
+                <span className="text-sm">{beverage.style}</span>
+              </div>
+              <span className="mt-3 block text-sm">
+                Tapped:{" "}
+                <span className="font-bold">{dayjs(tappedOn).fromNow()}</span>
               </span>
-              <span className="text-lg">{beverage.name}</span>
             </div>
-            <div>
-              <span className="mr-2 text-sm">
-                {String(beverage.abv)}%
-                <span className="mx-1 text-xs text-slate-500">ABV</span>
-              </span>
-              <span className="text-sm">{beverage.style}</span>
-            </div>
-            <span className="mt-3 block text-sm">
-              Tapped:{" "}
-              <span className="font-bold">{dayjs(tappedOn).fromNow()}</span>
-            </span>
             {edit && (
               <button
                 className="ml-auto mt-3 block text-sm underline"
