@@ -15,7 +15,7 @@ export const Marker = ({ bar }: MarkerProps) => {
     <HoverCard.Root>
       <HoverCard.Trigger>
         <Link href={`/${bar.slug}`}>
-          <Avatar.Root className="inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full bg-slate-900 align-middle">
+          <Avatar.Root className="relative left-[-22.5px] top-[-22.5px] inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full bg-slate-900 align-middle">
             <Avatar.Fallback className="leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium text-orange11">
               {bar.name
                 .split(" ")

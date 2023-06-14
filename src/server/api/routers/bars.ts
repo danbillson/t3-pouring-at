@@ -6,6 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { prisma } from "~/server/db";
 import { geocode } from "~/utils/maps";
 
 export const barsRouter = createTRPCRouter({
@@ -189,6 +190,61 @@ export const barsRouter = createTRPCRouter({
       return {
         bar,
       };
+    }),
+  search: publicProcedure
+    .input(
+      z.object({
+        location: z.string(),
+        style: z.string().optional(),
+        brewery: z.string().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const { results, status } = await geocode(
+        input.location,
+        env.GOOGLE_MAPS_SERVER_KEY
+      );
+
+      if (status !== "OK" || !results.length || !results[0]) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid address",
+        });
+      }
+
+      const [result] = results;
+      const { lng, lat } = result.geometry.location;
+
+      const query = await prisma.$queryRaw<Array<{ id: string }>>`
+        SELECT id FROM Bar WHERE ST_Distance_Sphere(POINT(${lng}, ${lat}), POINT(longitude, latitude)) < 1609;`;
+
+      const bars = await ctx.prisma.bar.findMany({
+        where: {
+          id: {
+            in: query.map((bar) => bar.id),
+          },
+          verified: true,
+        },
+        include: {
+          beverages: {
+            where: {
+              tappedOff: null,
+            },
+            include: {
+              beverage: {
+                include: {
+                  brewery: true,
+                },
+              },
+            },
+            orderBy: {
+              tappedOn: "desc",
+            },
+          },
+        },
+      });
+
+      return { bars, location: { lng, lat } };
     }),
 });
 
