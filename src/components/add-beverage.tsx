@@ -28,6 +28,7 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
     register,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -35,6 +36,7 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
   const ctx = api.useContext();
   const { mutate, isLoading: isCreating } = api.barBeverage.create.useMutation({
     onSuccess: () => {
+      setFocus("brewery");
       reset();
       void ctx.bars.getBySlug.invalidate();
     },
@@ -54,7 +56,7 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
         <label htmlFor="brewery">Brewery</label>
         <input
           className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="Full Circle Brew Co."
+          placeholder="Full Circle"
           autoComplete="off"
           {...register("brewery")}
         />

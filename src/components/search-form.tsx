@@ -68,7 +68,7 @@ export const SearchForm = ({ defaultValues }: SearchFormProps) => {
         <label htmlFor="brewery">Brewery</label>
         <input
           className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="Full Circle Brew Co."
+          placeholder="Full Circle"
           {...register("brewery")}
         />
       </div>
