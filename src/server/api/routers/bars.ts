@@ -134,10 +134,6 @@ export const barsRouter = createTRPCRouter({
       }
 
       const [result] = results;
-      const location = {
-        lng: result.geometry.location.lng,
-        lat: result.geometry.location.lat,
-      };
 
       const bar = await ctx.prisma.bar.create({
         data: {
@@ -147,7 +143,8 @@ export const barsRouter = createTRPCRouter({
           line2: input.line2,
           city: input.city,
           postcode: input.postcode,
-          location,
+          longitude: result.geometry.location.lng,
+          latitude: result.geometry.location.lat,
           openingHours: input.openingHours,
           url: input.url,
           updated: new Date(),

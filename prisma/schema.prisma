@@ -25,7 +25,8 @@ model Bar {
     line2        String?
     city         String
     postcode     String
-    location     Json
+    longitude    Float
+    latitude     Float
     openingHours Json          @map("opening_hours")
     url          String?
     updated      DateTime

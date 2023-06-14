@@ -19,8 +19,6 @@ const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
 
   const { bar } = data;
 
-  const location = bar.location as { lat: number; lng: number };
-
   return (
     <>
       <Head>
@@ -58,10 +56,10 @@ const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
       <div className="h-96 w-screen py-4">
         <Map
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-          defaultCenter={{ lat: location.lat, lng: location.lng }}
+          defaultCenter={{ lng: bar.longitude, lat: bar.latitude }}
           defaultZoom={17}
         >
-          <Marker bar={bar} lat={location.lat} lng={location.lng} />
+          <Marker bar={bar} lat={bar.latitude} lng={bar.longitude} />
         </Map>
       </div>
     </>
