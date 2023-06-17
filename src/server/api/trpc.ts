@@ -8,20 +8,25 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "~/server/db";
+import requestIp from "request-ip";
 
-interface AuthContext {
+interface TRPCContext {
   auth: SignedInAuthObject | SignedOutAuthObject;
+  ip: string | null;
 }
 
-const createInnerTRPCContext = ({ auth }: AuthContext) => {
+const createInnerTRPCContext = ({ auth, ip }: TRPCContext) => {
   return {
     auth,
     prisma,
+    ip,
   };
 };
 
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({ auth: getAuth(opts.req) });
+  const ip = requestIp.getClientIp(opts.req);
+
+  return createInnerTRPCContext({ auth: getAuth(opts.req), ip });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({

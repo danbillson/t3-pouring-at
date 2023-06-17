@@ -1,4 +1,6 @@
 import { TRPCError } from "@trpc/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import {
@@ -8,6 +10,12 @@ import {
 } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
 import { geocode } from "~/utils/maps";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  analytics: true,
+});
 
 export const barsRouter = createTRPCRouter({
   getByUserId: protectedProcedure
@@ -200,6 +208,17 @@ export const barsRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
+      if (ctx.ip) {
+        const { success } = await ratelimit.limit(ctx.ip);
+
+        if (!success) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "Too many requests",
+          });
+        }
+      }
+
       const { results, status } = await geocode(
         input.location,
         env.GOOGLE_MAPS_SERVER_KEY
