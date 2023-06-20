@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { type UseFormSetValue, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Layout } from "~/components/layout";
+import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 
 const schema = z.object({
@@ -102,12 +103,13 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
     <Layout>
       <h2 className="text-center text-2xl font-bold">Tell us about your bar</h2>
       {userIsAdmin && (
-        <button
-          className="btn mx-auto w-fit"
+        <Button
+          className="mx-auto"
+          variant="secondary"
           onClick={() => autofill(setValue)}
         >
           Autofill
-        </button>
+        </Button>
       )}
       <form
         className="mx-auto grid w-full max-w-sm gap-4 lg:max-w-3xl"
@@ -258,9 +260,9 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
           </div>
         </div>
 
-        <button className="btn mt-4 w-fit" disabled={isLoading} type="submit">
+        <Button className="mt-4" disabled={isLoading} type="submit">
           {isLoading ? "Creating bar..." : "Submit"}
-        </button>
+        </Button>
       </form>
     </Layout>
   );

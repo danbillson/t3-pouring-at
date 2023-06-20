@@ -1,5 +1,6 @@
 import type { BarBeverage, Beverage, Brewery } from "@prisma/client";
 import { api } from "~/utils/api";
+import { Button } from "~/components/ui/button";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -50,15 +51,16 @@ export const BeverageList = ({ beverages, edit }: BeverageListProps) => {
               </span>
             </div>
             {edit && (
-              <button
-                className="ml-auto mt-3 block text-sm underline"
+              <Button
+                className="ml-auto mt-3 underline"
+                variant="ghost"
                 disabled={isLoading}
                 onClick={() => {
                   mutate({ barId, beverageId });
                 }}
               >
                 Untap
-              </button>
+              </Button>
             )}
           </div>
         );

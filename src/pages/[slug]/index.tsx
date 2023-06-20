@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BeverageList } from "~/components/beverage-list";
 import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
+import { Button } from "~/components/ui/button";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { api } from "~/utils/api";
 
@@ -40,9 +41,9 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
               </p>
             </div>
             {isOwner && (
-              <Link href={`/${bar.slug}/edit`} className="btn h-fit">
-                Edit
-              </Link>
+              <Button variant="secondary" asChild>
+                <Link href={`/${bar.slug}/edit`}>Edit</Link>
+              </Button>
             )}
           </div>
 

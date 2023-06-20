@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/table";
+import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 
 const AdminPage: NextPage = () => {
@@ -63,14 +64,15 @@ const AdminPage: NextPage = () => {
                 <TableCell>{bar.city}</TableCell>
                 <TableCell>{bar.postcode}</TableCell>
                 <TableCell className="text-right">
-                  <button
+                  <Button
                     className="underline"
+                    variant="ghost"
                     onClick={() => {
                       mutate({ id: bar.id });
                     }}
                   >
                     Verify
-                  </button>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))

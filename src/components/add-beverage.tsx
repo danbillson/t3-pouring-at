@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type Bar } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 
 const schema = z.object({
@@ -115,13 +116,9 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
       </div>
 
       <div />
-      <button
-        className="btn ml-auto mt-4 w-fit"
-        type="submit"
-        disabled={isCreating}
-      >
+      <Button className="ml-auto mt-4" type="submit" disabled={isCreating}>
         Submit
-      </button>
+      </Button>
     </form>
   );
 };

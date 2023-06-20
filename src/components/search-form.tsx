@@ -1,7 +1,8 @@
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "~/components/ui/button";
 
 const schema = z.object({
   location: z.string().trim().nonempty({ message: "Please enter a location" }),
@@ -76,9 +77,9 @@ export const SearchForm = ({ defaultValues }: SearchFormProps) => {
       <div />
       <div />
 
-      <button className="btn ml-auto mt-4 w-fit" type="submit">
+      <Button className="ml-auto" type="submit">
         Submit
-      </button>
+      </Button>
     </form>
   );
 };

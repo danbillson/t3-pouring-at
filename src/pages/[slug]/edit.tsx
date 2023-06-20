@@ -7,6 +7,7 @@ import { AddBeverage } from "~/components/add-beverage";
 import { BeverageList } from "~/components/beverage-list";
 import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
+import { Button } from "~/components/ui/button";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 
@@ -40,9 +41,9 @@ const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
               </p>
             </div>
 
-            <Link href={`/${bar.slug}`} className="btn h-fit">
-              Back
-            </Link>
+            <Button variant="secondary" asChild>
+              <Link href={`/${bar.slug}`}>Back</Link>
+            </Button>
           </div>
 
           <p className="mb-2 mt-8 font-bold">Add a new beverage</p>

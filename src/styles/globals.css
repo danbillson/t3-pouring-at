@@ -71,8 +71,8 @@
 
   html {
     font-family: "Space Mono", system-ui, sans-serif;
-    color: #0e1010;
-    background-color: #fef9f8;
+    color: var(--foreground);
+    background-color: var(--background);
   }
 
   body {
