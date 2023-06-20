@@ -1,28 +1,22 @@
-# Create T3 App
+# Pouring at 🍻
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+An app for finding which beers are currently pouring at different bars around the UK
 
-## What's next? How do I make an app with this?
+## Motivation
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+The idea came from a trip to Bristol where I had a day to myself but couldn't easily find the best bars/breweries to visit or who would have the best drinks (I'm now an untappd user which would have been a start) but since then going for drinks in the Toon (Newcastle) can sometimes be made difficult since there are so many good places to go it is often decided by who is pouring the best drinks which again takes more effort than should be required hence the creation of this app
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Project
+
+This project was bootstrapped with [T3](https://create.t3.gg/) and uses the following tech
 
 - [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- [shadcn/ui](https://ui.shadcn.com)
+- [Clerk](https://clerk.com)
+- [Vercel](https://vercel.com)
+- [Planetscale](https://planetscale.com)
+- [Upstash](https://upstash.com)
+- [Axiom](https://axiom.co/)
