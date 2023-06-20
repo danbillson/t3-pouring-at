@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,9 +15,10 @@ type FormValues = z.infer<typeof schema>;
 
 type SearchFormProps = {
   defaultValues?: FormValues;
+  loading?: boolean;
 };
 
-export const SearchForm = ({ defaultValues }: SearchFormProps) => {
+export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
   const router = useRouter();
   const {
     register,
@@ -77,8 +79,14 @@ export const SearchForm = ({ defaultValues }: SearchFormProps) => {
       <div />
       <div />
 
-      <Button className="ml-auto" type="submit">
-        Submit
+      <Button className="ml-auto" type="submit" disabled={loading}>
+        {loading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Searching...
+          </>
+        ) : (
+          "Submit"
+        )}
       </Button>
     </form>
   );

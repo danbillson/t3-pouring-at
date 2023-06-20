@@ -40,7 +40,7 @@ const Search: NextPage = () => {
         <h1 className="max-w-2xl px-4 text-2xl text-black">
           Search for your favourite beers that are pouring at bars across the UK
         </h1>
-        <SearchForm defaultValues={defaultValues} />
+        <SearchForm defaultValues={defaultValues} loading={isLoading} />
         {isLoading && <p className="pb-4">Loading...</p>}
         {isError && <p className="pb-4">Something went wrong...</p>}
         {data && data.bars.length === 0 && (
