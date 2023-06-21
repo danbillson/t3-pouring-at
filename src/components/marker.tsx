@@ -1,5 +1,5 @@
 import { type Bar } from "@prisma/client";
-import * as Avatar from "@radix-ui/react-avatar";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import Link from "next/link";
 
@@ -15,14 +15,14 @@ export const Marker = ({ bar }: MarkerProps) => {
     <HoverCard.Root>
       <HoverCard.Trigger>
         <Link href={`/${bar.slug}`}>
-          <Avatar.Root className="relative left-[-22.5px] top-[-22.5px] inline-flex h-[45px] w-[45px] select-none items-center justify-center overflow-hidden rounded-full bg-slate-900 align-middle">
-            <Avatar.Fallback className="leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium text-orange11">
+          <Avatar className="left-[-22.5px] top-[-22.5px] inline-flex h-[45px] w-[45px] select-none">
+            <AvatarFallback>
               {bar.name
                 .split(" ")
                 .map((w) => w[0])
                 .slice(0, 2)}
-            </Avatar.Fallback>
-          </Avatar.Root>
+            </AvatarFallback>
+          </Avatar>
         </Link>
       </HoverCard.Trigger>
       <HoverCard.Portal>

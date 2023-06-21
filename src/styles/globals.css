@@ -68,19 +68,15 @@
 
     --radius: 0.5rem;
   }
+}
 
-  html {
-    font-family: "Space Mono", system-ui, sans-serif;
-    color: var(--foreground);
-    background-color: var(--background);
+@layer base {
+  * {
+    @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  .btn {
-    @apply inline-block bg-black px-4 py-2 text-white;
+    font-family: "Space Mono", system-ui, sans-serif;
   }
 }
