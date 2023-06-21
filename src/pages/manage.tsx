@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
-import { PlusIcon } from "@radix-ui/react-icons";
+import { Plus } from "lucide-react";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { Layout } from "~/components/layout";
@@ -48,8 +48,8 @@ const Manage: NextPage = () => {
           </Card>
         ))}
         <Link href="/create" className="border-2 border-foreground p-4">
-          <span className="flex items-center gap-2 align-middle text-xl font-bold">
-            <PlusIcon />
+          <span className="flex items-center gap-3 align-middle text-xl font-bold">
+            <Plus />
             Add new bar
           </span>
         </Link>

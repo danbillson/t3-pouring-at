@@ -1,69 +1,52 @@
 import { useAuth } from "@clerk/nextjs";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {
-  ExitIcon,
-  HamburgerMenuIcon,
-  HomeIcon,
-  Pencil2Icon,
-  PersonIcon,
-} from "@radix-ui/react-icons";
+import { Edit, Home, LogOut, Menu, User2 } from "lucide-react";
 import { useRouter } from "next/router";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 export const LoggedInDropdown = () => {
   const { signOut } = useAuth();
   const router = useRouter();
 
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <button
           className="inline-flex h-[35px] w-[35px] items-center justify-center outline-none"
           aria-label="Signed in dropdown menu"
         >
-          <HamburgerMenuIcon />
+          <Menu />
         </button>
-      </DropdownMenu.Trigger>
+      </DropdownMenuTrigger>
 
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content className="min-w-[220px] rounded-md bg-white p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade">
-          <DropdownMenu.Item
-            onSelect={() => void router.push("/")}
-            className={dropdownItem}
-          >
-            <HomeIcon className="mr-2 h-4 w-4" />
-            Home
-          </DropdownMenu.Item>
+      <DropdownMenuContent className="mx-2 w-56">
+        <DropdownMenuItem onSelect={() => void router.push("/")}>
+          <Home className="mr-2 h-4 w-4" />
+          Home
+        </DropdownMenuItem>
 
-          <DropdownMenu.Item
-            onSelect={() => void router.push("/account")}
-            className={dropdownItem}
-          >
-            <PersonIcon className="mr-2 h-4 w-4" />
-            Account
-          </DropdownMenu.Item>
+        <DropdownMenuItem onSelect={() => void router.push("/account")}>
+          <User2 className="mr-2 h-4 w-4" />
+          Account
+        </DropdownMenuItem>
 
-          <DropdownMenu.Item
-            onSelect={() => void router.push("/manage")}
-            className={dropdownItem}
-          >
-            <Pencil2Icon className="mr-2 h-4 w-4" />
-            Manage Bars
-          </DropdownMenu.Item>
+        <DropdownMenuItem onSelect={() => void router.push("/manage")}>
+          <Edit className="mr-2 h-4 w-4" />
+          Manage Bars
+        </DropdownMenuItem>
 
-          <DropdownMenu.Separator className="m-[5px] h-[1px] bg-orange6" />
+        <DropdownMenuSeparator />
 
-          <DropdownMenu.Item
-            onSelect={() => void signOut()}
-            className={dropdownItem}
-          >
-            <ExitIcon className="mr-2 h-4 w-4" />
-            Sign out
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+        <DropdownMenuItem onSelect={() => void signOut()}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
-
-const dropdownItem =
-  "group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] text-[13px] leading-none text-orange11 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-orange9 data-[disabled]:text-sand8 data-[highlighted]:text-orange1";
