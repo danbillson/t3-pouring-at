@@ -4,6 +4,15 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
 
 const schema = z.object({
   location: z.string().trim().nonempty({ message: "Please enter a location" }),
@@ -20,11 +29,7 @@ type SearchFormProps = {
 
 export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const form = useForm<FormValues>({
     defaultValues,
     resolver: zodResolver(schema),
   });
@@ -38,56 +43,71 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
   };
 
   return (
-    <form
-      className="mx-auto grid w-full grid-cols-1 gap-4 px-6 md:grid-cols-2"
-      /* eslint-disable-next-line */
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="flex flex-col">
-        <label htmlFor="location">Location</label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="Newcastle upon Tyne"
-          {...register("location")}
+    <Form {...form}>
+      <form
+        className="mx-auto grid w-full grid-cols-1 gap-4 px-6 md:grid-cols-2"
+        /* eslint-disable-next-line */
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Location</FormLabel>
+              <FormControl>
+                <Input placeholder="Newcastle upon Tyne" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.location && (
-          <p className="mt-2 text-xs italic text-red-500">
-            {errors.location?.message}
-          </p>
-        )}
-      </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="style">Style</label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="IPA"
-          autoComplete="off"
-          {...register("style")}
+        <FormField
+          control={form.control}
+          name="style"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Style</FormLabel>
+              <FormControl>
+                <Input placeholder="IPA" autoComplete="off" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="brewery">Brewery</label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="Full Circle"
-          {...register("brewery")}
+        <FormField
+          control={form.control}
+          name="brewery"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Brewery</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Full Circle"
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <div />
-      <div />
+        <div />
+        <div />
 
-      <Button className="ml-auto" type="submit" disabled={loading}>
-        {loading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Searching...
-          </>
-        ) : (
-          "Submit"
-        )}
-      </Button>
-    </form>
+        <Button className="ml-auto" type="submit" disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Searching...
+            </>
+          ) : (
+            "Submit"
+          )}
+        </Button>
+      </form>
+    </Form>
   );
 };
