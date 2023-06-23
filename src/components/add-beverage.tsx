@@ -4,6 +4,16 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
+import {
+  Form,
+  Field,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
 
 const schema = z.object({
   brewery: z.string().nonempty({ message: "Please enter a brewery" }),
@@ -25,20 +35,14 @@ type AddBeverageProps = {
 };
 
 export const AddBeverage = ({ bar }: AddBeverageProps) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setFocus,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
   const ctx = api.useContext();
   const { mutate, isLoading: isCreating } = api.barBeverage.create.useMutation({
     onSuccess: () => {
-      setFocus("brewery");
-      reset();
+      form.setFocus("brewery");
+      form.reset({ brewery: "", name: "", style: "", abv: 0 });
       void ctx.bars.getBySlug.invalidate();
     },
   });
@@ -48,77 +52,50 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
   };
 
   return (
-    <form
-      className="mx-auto grid w-full grid-cols-1 gap-4 lg:grid-cols-2"
-      /* eslint-disable-next-line */
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="flex flex-col">
-        <label htmlFor="brewery">Brewery</label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="Full Circle"
-          autoComplete="off"
-          {...register("brewery")}
-        />
-        {errors.brewery && (
-          <p className="mt-2 text-xs italic text-red-500">
-            {errors.brewery?.message}
-          </p>
-        )}
-      </div>
+    <Form {...form}>
+      <form
+        className="mx-auto grid w-full grid-cols-1 gap-4 lg:grid-cols-2"
+        /* eslint-disable-next-line */
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <Field name="brewery" label="Brewery" control={form.control}>
+          <Input placeholder="Full Circle" autoComplete="off" />
+        </Field>
 
-      <div className="flex flex-col">
-        <label htmlFor="name">Beverage name</label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="Looper"
-          autoComplete="off"
-          {...register("name")}
-        />
-        {errors.name && (
-          <p className="mt-2 text-xs italic text-red-500">
-            {errors.name?.message}
-          </p>
-        )}
-      </div>
+        <Field name="name" label="Beverage name" control={form.control}>
+          <Input placeholder="Looper" autoComplete="off" />
+        </Field>
 
-      <div className="flex flex-col">
-        <label htmlFor="abv">
-          ABV <span className="text-slate-500">%</span>
-        </label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="6.4"
-          autoComplete="off"
-          {...register("abv", { valueAsNumber: true })}
+        <FormField
+          name="abv"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>ABV</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="number"
+                  step="0.1"
+                  onChange={(event) => field.onChange(+event.target.value)}
+                  placeholder="6.4"
+                  autoComplete="off"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.abv && (
-          <p className="mt-2 text-xs italic text-red-500">
-            {errors.abv?.message}
-          </p>
-        )}
-      </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="style">Style</label>
-        <input
-          className="w-full border-2 border-solid border-black px-4 py-2"
-          placeholder="IPA"
-          autoComplete="off"
-          {...register("style")}
-        />
-        {errors.style && (
-          <p className="mt-2 text-xs italic text-red-500">
-            {errors.style?.message}
-          </p>
-        )}
-      </div>
+        <Field name="style" label="Style" control={form.control}>
+          <Input placeholder="IPA" autoComplete="off" />
+        </Field>
 
-      <div />
-      <Button className="ml-auto mt-4" type="submit" disabled={isCreating}>
-        Submit
-      </Button>
-    </form>
+        <div />
+        <Button className="ml-auto mt-4" type="submit" disabled={isCreating}>
+          Submit
+        </Button>
+      </form>
+    </Form>
   );
 };

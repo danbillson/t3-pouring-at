@@ -12,7 +12,7 @@ export const BeverageList = ({ beverages, edit }: BeverageListProps) => {
       {beverages.map((barBeverage) => {
         return (
           <BeverageCard
-            key={barBeverage.barId}
+            key={barBeverage.beverageId}
             barBeverage={barBeverage}
             edit={edit}
           />
