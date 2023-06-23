@@ -3,17 +3,17 @@ import { type Bar } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
-import { api } from "~/utils/api";
 import {
-  Form,
   Field,
+  Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { api } from "~/utils/api";
 
 const schema = z.object({
   brewery: z.string().nonempty({ message: "Please enter a brewery" }),

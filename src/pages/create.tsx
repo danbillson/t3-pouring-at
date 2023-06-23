@@ -7,6 +7,8 @@ import { z } from "zod";
 import { Layout } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
+import { Form, Field, FormLabel } from "~/components/ui/form";
+import { Input } from "~/components/ui/input";
 
 const schema = z.object({
   name: z
@@ -57,17 +59,10 @@ type CreateBarProps = {
 
 const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
   const router = useRouter();
-  const {
-    register,
-    watch,
-    handleSubmit,
-    setError,
-    setValue,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
-  const slug = watch("slug");
+  const slug = form.watch("slug");
 
   const { mutate, isLoading } = api.bars.create.useMutation({
     onSuccess: (data) => {
@@ -75,19 +70,19 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
     },
     onError: (error) => {
       if (error.message === "Reserved slug") {
-        setError("slug", {
+        form.setError("slug", {
           type: "focus",
           message: `Sorry, that slug is reserved. Please try a different slug.`,
         });
       }
       if (error.message === "Invalid postcode") {
-        setError("postcode", {
+        form.setError("postcode", {
           type: "focus",
           message: `Sorry, we couldn't find that postcode. Please try again.`,
         });
       }
       if (error.message.includes("Unique constraint")) {
-        setError("slug", {
+        form.setError("slug", {
           type: "focus",
           message: `Sorry, that slug is already taken. Please try a different slug.`,
         });
@@ -106,164 +101,96 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
         <Button
           className="mx-auto"
           variant="secondary"
-          onClick={() => autofill(setValue)}
+          onClick={() => autofill(form.setValue)}
         >
           Autofill
         </Button>
       )}
-      <form
-        className="mx-auto grid w-full max-w-sm gap-4 lg:max-w-3xl"
-        /* eslint-disable-next-line */
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="flex flex-col">
-            <label htmlFor="name">Bar name</label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder="The Wobbly Duck"
-              autoComplete="off"
-              {...register("name")}
-            />
-            {errors.name && (
-              <p className="mt-2 text-xs italic text-red-500">
-                {errors.name?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="slug">Slug</label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder="wobbly-duck"
-              autoComplete="off"
-              {...register("slug")}
-            />
-            {slug && (
-              <p className="mt-2 text-xs italic text-slate-500">
-                https://pouring.at/{slug}
-              </p>
-            )}
-            {errors.slug && (
-              <p className="mt-2 text-xs italic text-red-500">
-                {errors.slug?.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="my-4 h-[1px] w-full bg-slate-500" />
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="flex flex-col">
-            <label htmlFor="line1">Address Line 1</label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder="4 Old Eldon Square"
-              autoComplete="off"
-              {...register("line1")}
-            />
-            {errors.line1 && (
-              <p className="mt-2 text-xs italic text-red-500">
-                {errors.line1?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="line2">
-              Address Line 2 <span className="text-slate-500">(Optional)</span>
-            </label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder=""
-              autoComplete="off"
-              {...register("line2")}
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="city">City</label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder="Newcastle upon Tyne"
-              autoComplete="off"
-              {...register("city")}
-            />
-            {errors.city && (
-              <p className="mt-2 text-xs italic text-red-500">
-                {errors.city?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="postcode">Postcode</label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder="NE1 7JG"
-              autoComplete="off"
-              {...register("postcode")}
-            />
-            {errors.postcode && (
-              <p className="mt-2 text-xs italic text-red-500">
-                {errors.postcode?.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="my-4 h-[1px] w-full bg-slate-500" />
-
-        <div className="flex flex-col">
-          <label>
-            Opening Hours <span className="text-slate-500">(Optional)</span>
-          </label>
+      <Form {...form}>
+        <form
+          className="mx-auto grid w-full max-w-sm gap-4 lg:max-w-3xl"
+          /* eslint-disable-next-line */
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {days.map((day) => (
-              <div key={day} className="flex flex-col">
-                <label
-                  className="text-slate-500 first-letter:uppercase"
-                  htmlFor={`openingHours.${day}`}
-                >
-                  {day}
-                </label>
-                <input
-                  className="w-full border-2 border-solid border-black px-4 py-2"
-                  placeholder="12 - 11pm"
-                  {...register(`openingHours.${day}`)}
-                />
-              </div>
-            ))}
+            <Field name="name" label="Bar name" control={form.control}>
+              <Input placeholder="The Wobbly Duck" autoComplete="off" />
+            </Field>
+
+            <Field
+              name="slug"
+              label="Slug"
+              description={slug ? `https://pouring.at/${slug}` : ""}
+              control={form.control}
+            >
+              <Input placeholder="wobbly-duck" autoComplete="off" />
+            </Field>
           </div>
-        </div>
 
-        <div className="my-4 h-[1px] w-full bg-slate-500" />
+          <div className="my-4 h-[1px] w-full bg-slate-500" />
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <Field name="line1" label="Address line 1" control={form.control}>
+              <Input placeholder="4 Old Eldon Square" autoComplete="off" />
+            </Field>
+
+            <Field name="line2" label="Address line 2" control={form.control}>
+              <Input placeholder="" autoComplete="off" />
+            </Field>
+
+            <Field name="city" label="City" control={form.control}>
+              <Input placeholder="Newcastle upon Tyne" autoComplete="off" />
+            </Field>
+
+            <Field name="postcode" label="Postcode" control={form.control}>
+              <Input placeholder="NE1 7JG" autoComplete="off" />
+            </Field>
+          </div>
+
+          <div className="my-4 h-[1px] w-full bg-slate-500" />
+
           <div className="flex flex-col">
-            <label htmlFor="url">
-              Website url <span className="text-slate-500">(Optional)</span>
-            </label>
-            <input
-              className="w-full border-2 border-solid border-black px-4 py-2"
-              placeholder="https://wobblyduck.co.uk/"
-              autoComplete="off"
-              {...register("url")}
-            />
-            {errors.url && (
-              <p className="mt-2 text-xs italic text-red-500">
-                {errors.url?.message}
-              </p>
-            )}
+            <FormLabel>
+              Opening Hours <span className="text-slate-500">(Optional)</span>
+            </FormLabel>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              {days.map((day) => (
+                <Field
+                  key={day}
+                  name={`openingHours.${day}`}
+                  label={day}
+                  control={form.control}
+                >
+                  <Input placeholder="12 - 11pm" autoComplete="off" />
+                </Field>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <Button className="mt-4" disabled={isLoading} type="submit">
-          {isLoading ? "Creating bar..." : "Submit"}
-        </Button>
-      </form>
+          <div className="my-4 h-[1px] w-full bg-slate-500" />
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <Field
+              name="url"
+              label={
+                <>
+                  Website url <span className="text-slate-500">(Optional)</span>
+                </>
+              }
+              control={form.control}
+            >
+              <Input
+                placeholder="https://wobblyduck.co.uk/"
+                autoComplete="off"
+              />
+            </Field>
+          </div>
+
+          <Button className="mt-4" disabled={isLoading} type="submit">
+            {isLoading ? "Creating bar..." : "Submit"}
+          </Button>
+        </form>
+      </Form>
     </Layout>
   );
 };

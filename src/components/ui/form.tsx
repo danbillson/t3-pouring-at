@@ -170,7 +170,7 @@ type FieldProps<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = {
   children: React.ReactElement;
-  label: string;
+  label?: React.ReactNode;
   description?: string;
 } & Omit<ControllerProps<TFieldValues, TName>, "render">;
 
@@ -179,6 +179,7 @@ const Field = <
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   children,
+  label,
   description,
   ...props
 }: FieldProps<TFieldValues, TName>) => {
@@ -187,7 +188,7 @@ const Field = <
       {...props}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{props.label}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             {React.cloneElement(children, {
               ...field,
