@@ -4,14 +4,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
+import { Field, Form } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 
 const schema = z.object({
@@ -49,51 +42,17 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
         /* eslint-disable-next-line */
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <FormField
-          control={form.control}
-          name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Location</FormLabel>
-              <FormControl>
-                <Input placeholder="Newcastle upon Tyne" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Field name="location" label="Location" control={form.control}>
+          <Input placeholder="Newcastle upon Tyne" />
+        </Field>
 
-        <FormField
-          control={form.control}
-          name="style"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Style</FormLabel>
-              <FormControl>
-                <Input placeholder="IPA" autoComplete="off" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Field name="style" label="Style" control={form.control}>
+          <Input placeholder="IPA" autoComplete="off" />
+        </Field>
 
-        <FormField
-          control={form.control}
-          name="brewery"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Brewery</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Full Circle"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Field name="brewery" label="Brewery" control={form.control}>
+          <Input placeholder="Full Circle" autoComplete="off" />
+        </Field>
 
         <div />
         <div />

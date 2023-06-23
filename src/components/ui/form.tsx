@@ -1,17 +1,17 @@
-import * as React from "react";
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import {
   Controller,
+  FormProvider,
+  useFormContext,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
-  FormProvider,
-  useFormContext,
 } from "react-hook-form";
 
-import { cn } from "~/lib/utils";
 import { Label } from "~/components/ui/label";
+import { cn } from "~/lib/utils";
 
 const Form = FormProvider;
 
@@ -165,13 +165,50 @@ const FormMessage = React.forwardRef<
 });
 FormMessage.displayName = "FormMessage";
 
+type FieldProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  children: React.ReactElement;
+  label: string;
+  description?: string;
+} & Omit<ControllerProps<TFieldValues, TName>, "render">;
+
+const Field = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>({
+  children,
+  description,
+  ...props
+}: FieldProps<TFieldValues, TName>) => {
+  return (
+    <FormField
+      {...props}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{props.label}</FormLabel>
+          <FormControl>
+            {React.cloneElement(children, {
+              ...field,
+            })}
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
+
 export {
-  useFormField,
+  Field,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };
