@@ -6,6 +6,8 @@ import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Field, Form } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { TypeAhead } from "~/components/ui/typeahead";
+import { cities } from "~/data/gb";
 
 const schema = z.object({
   location: z.string().trim().nonempty({ message: "Please enter a location" }),
@@ -42,8 +44,13 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
         /* eslint-disable-next-line */
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <Field name="location" label="Location" control={form.control}>
-          <Input placeholder="Newcastle upon Tyne" />
+        <Field
+          name="location"
+          label="Location"
+          description="Search by town, city or postcode"
+          control={form.control}
+        >
+          <TypeAhead placeholder="Newcastle upon Tyne" options={cities} />
         </Field>
 
         <Field name="style" label="Style" control={form.control}>
@@ -53,9 +60,6 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
         <Field name="brewery" label="Brewery" control={form.control}>
           <Input placeholder="Full Circle" autoComplete="off" />
         </Field>
-
-        <div />
-        <div />
 
         <Button className="ml-auto" type="submit" disabled={loading}>
           {loading ? (
