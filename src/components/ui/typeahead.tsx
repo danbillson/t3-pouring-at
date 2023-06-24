@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useClickAway } from "react-use";
 import { cn } from "~/lib/utils";
 import { Input } from "./input";
 
@@ -36,14 +35,18 @@ type TypeAheadProps = {
   placeholder?: string;
   value?: string;
   onChange?: (...event: any[]) => void;
+  minSearch?: number;
 };
 
-export const TypeAhead = ({ options, ...props }: TypeAheadProps) => {
+export const TypeAhead = ({
+  options,
+  minSearch = 2,
+  ...props
+}: TypeAheadProps) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const [focused, setFocused] = React.useState(false);
   const length = props.value?.length || 0;
-  const open = length >= 2 && focused;
-  useClickAway(ref, () => setFocused(false));
+  const open = length >= minSearch && focused;
 
   const filteredOptions = options.filter(
     (option) =>
@@ -53,7 +56,13 @@ export const TypeAhead = ({ options, ...props }: TypeAheadProps) => {
 
   return (
     <div ref={ref} className="relative">
-      <Input {...props} onFocus={() => setFocused(true)} autoComplete="off" />
+      <Input
+        {...props}
+        onFocus={() => setFocused(true)}
+        // Stop race condition where the input is blurred before the click event
+        onBlur={() => setTimeout(() => setFocused(false), 1)}
+        autoComplete="off"
+      />
       {open && filteredOptions.length !== 0 && (
         <Content open={open}>
           {filteredOptions.map((option) => (
