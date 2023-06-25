@@ -3,6 +3,7 @@ import Map from "google-maps-react-markers";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { BarPreview } from "~/components/bar-preview";
+import { LoadingBarPreview } from "~/components/loading-bar-preview";
 import { Marker } from "~/components/marker";
 import { SearchForm } from "~/components/search-form";
 import { api } from "~/utils/api";
@@ -18,7 +19,7 @@ const Search: NextPage = () => {
   const { location, style, brewery } = router.query as SearchQuery;
   const search = { location, style, brewery };
 
-  const { data, isLoading, isError } = api.bars.search.useQuery(
+  const { data, isLoading, isError, error } = api.bars.search.useQuery(
     {
       location,
       style,
@@ -40,8 +41,13 @@ const Search: NextPage = () => {
           Search for your favourite beers that are pouring at bars across the UK
         </h1>
         <SearchForm defaultValues={search} loading={isLoading} />
-        {isLoading && <p className="pb-4">Loading...</p>}
-        {isError && <p className="pb-4">Something went wrong...</p>}
+        {isLoading && (
+          <div className="grid w-full grid-cols-1 gap-4 px-6 md:grid-cols-2">
+            <LoadingBarPreview />
+            <LoadingBarPreview />
+          </div>
+        )}
+        {isError && <p className="pb-4">{prettyError(error)}</p>}
         {data && data.bars.length === 0 && (
           <p className="pb-4">No bars found, try searching again</p>
         )}
@@ -80,6 +86,13 @@ const Search: NextPage = () => {
       </div>
     </main>
   );
+};
+
+const prettyError = (error: { message: string } | undefined) => {
+  if (!error) return "Something went wrong...";
+  if (error.message === "Invalid address") {
+    return "Invalid address, please try a different location or postcode";
+  }
 };
 
 type BarWithBeverages = Bar & {
