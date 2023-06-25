@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "~/lib/utils";
 import { Input } from "./input";
+import { useClickAway } from "react-use";
 
 type ContentProps = {
   children: React.ReactNode;
@@ -47,6 +48,7 @@ export const TypeAhead = ({
   const [focused, setFocused] = React.useState(false);
   const length = props.value?.length || 0;
   const open = length >= minSearch && focused;
+  useClickAway(ref, () => setFocused(false));
 
   const filteredOptions = options.filter(
     (option) =>
@@ -56,16 +58,10 @@ export const TypeAhead = ({
 
   return (
     <div ref={ref} className="relative">
-      <Input
-        {...props}
-        onFocus={() => setFocused(true)}
-        // Stop race condition where the input is blurred before the click event
-        onBlur={() => setTimeout(() => setFocused(false), 1)}
-        autoComplete="off"
-      />
+      <Input {...props} onFocus={() => setFocused(true)} autoComplete="off" />
       {open && filteredOptions.length !== 0 && (
         <Content open={open}>
-          {filteredOptions.map((option) => (
+          {filteredOptions.sort(byStartsWith(props.value)).map((option) => (
             <div
               key={option}
               role="option"
@@ -83,4 +79,15 @@ export const TypeAhead = ({
       )}
     </div>
   );
+};
+
+const byStartsWith = (value: string | undefined) => (a: string, b: string) => {
+  if (!value) return 0;
+
+  const aStartsWith = a.toLowerCase().startsWith(value.toLowerCase());
+  const bStartsWith = b.toLowerCase().startsWith(value.toLowerCase());
+
+  if (aStartsWith && !bStartsWith) return -1;
+  if (!aStartsWith && bStartsWith) return 1;
+  return 0;
 };
