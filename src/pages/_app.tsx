@@ -3,6 +3,7 @@ import "@fontsource/space-mono/400.css";
 import "@fontsource/space-mono/700.css";
 import { type AppType } from "next/app";
 import Head from "next/head";
+import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
@@ -22,6 +23,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <div className="min-h-screen">
           <Header />
           <Component {...pageProps} />
+          <Footer />
         </div>
       </ClerkProvider>
     </>

@@ -61,6 +61,9 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
           <Input placeholder="Full Circle" autoComplete="off" />
         </Field>
 
+        <div />
+        <div />
+
         <Button className="ml-auto" type="submit" disabled={loading}>
           {loading ? (
             <>
