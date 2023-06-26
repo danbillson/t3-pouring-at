@@ -3,7 +3,7 @@ import Map from "google-maps-react-markers";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { BarPreview } from "~/components/bar-preview";
-import { LoadingBarPreview } from "~/components/loading-bar-preview";
+import { LoadingBarPreview } from "~/components/loading";
 import { Marker } from "~/components/marker";
 import { SearchForm } from "~/components/search-form";
 import { api } from "~/utils/api";

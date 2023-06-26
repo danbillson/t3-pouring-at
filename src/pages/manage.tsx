@@ -2,6 +2,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import { type NextPage } from "next";
 import Link from "next/link";
+import { LoadingBar } from "~/components/loading";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -21,32 +22,35 @@ const Manage: NextPage = () => {
     { enabled: !!userId }
   );
 
-  if (isError) return <Layout>failed to load</Layout>;
-
-  if (isLoading) return <Layout>loading...</Layout>;
-
   return (
     <Layout>
       <h2 className="text-2xl font-bold">Your Bars</h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {data.bars.map((bar) => (
-          <Card key={bar.id}>
-            <CardHeader>
-              <CardTitle>{bar.name}</CardTitle>
-              <CardDescription>
-                {bar.line1},{bar.line2 && ` ${bar.line2},`} {bar.city},{" "}
-                {bar.postcode}
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <Button className="ml-auto" variant="ghost" asChild>
-                <Link href={`/${bar.slug}`} className="underline">
-                  Go to bar
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+        {true && <LoadingBar />}
+        {isError && (
+          <div className="pb-4">
+            Something went wrong fetching your bars, please try again
+          </div>
+        )}
+        {data &&
+          data.bars.map((bar) => (
+            <Card key={bar.id}>
+              <CardHeader>
+                <CardTitle>{bar.name}</CardTitle>
+                <CardDescription>
+                  {bar.line1},{bar.line2 && ` ${bar.line2},`} {bar.city},{" "}
+                  {bar.postcode}
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button className="ml-auto" variant="ghost" asChild>
+                  <Link href={`/${bar.slug}`} className="underline">
+                    Go to bar
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         <Link href="/create" className="border-2 border-foreground p-4">
           <span className="flex items-center gap-3 align-middle text-xl font-bold">
             <Plus />
