@@ -3,8 +3,8 @@ import "@fontsource/space-mono/400.css";
 import "@fontsource/space-mono/700.css";
 import { type AppType } from "next/app";
 import Head from "next/head";
-import { Footer } from "~/components/footer";
-import { Header } from "~/components/header";
+import { Footer } from "~/components/ui/footer";
+import { Header } from "~/components/ui/header";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
 

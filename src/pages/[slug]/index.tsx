@@ -4,9 +4,9 @@ import type { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { BeverageList } from "~/components/beverage-list";
-import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
 import { Button } from "~/components/ui/button";
+import { Layout } from "~/components/ui/layout";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { api } from "~/utils/api";
 

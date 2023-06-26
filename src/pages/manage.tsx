@@ -2,7 +2,6 @@ import { useAuth } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import { type NextPage } from "next";
 import Link from "next/link";
-import { Layout } from "~/components/layout";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -11,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { Layout } from "~/components/ui/layout";
 import { api } from "~/utils/api";
 
 const Manage: NextPage = () => {

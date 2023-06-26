@@ -1,7 +1,8 @@
 import { clerkClient, getAuth } from "@clerk/nextjs/server";
 import type { GetServerSideProps } from "next";
 import { type NextPage } from "next";
-import { Layout } from "~/components/layout";
+import { Button } from "~/components/ui/button";
+import { Layout } from "~/components/ui/layout";
 import {
   Table,
   TableBody,
@@ -11,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 
 const AdminPage: NextPage = () => {

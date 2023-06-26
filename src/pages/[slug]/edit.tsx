@@ -5,9 +5,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { AddBeverage } from "~/components/add-beverage";
 import { BeverageList } from "~/components/beverage-list";
-import { Layout } from "~/components/layout";
 import { Marker } from "~/components/marker";
 import { Button } from "~/components/ui/button";
+import { Layout } from "~/components/ui/layout";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 

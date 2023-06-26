@@ -2,13 +2,13 @@ import { clerkClient, getAuth } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { type UseFormSetValue, useForm } from "react-hook-form";
+import { useForm, type UseFormSetValue } from "react-hook-form";
 import { z } from "zod";
-import { Layout } from "~/components/layout";
 import { Button } from "~/components/ui/button";
-import { api } from "~/utils/api";
-import { Form, Field, FormLabel } from "~/components/ui/form";
+import { Field, Form, FormLabel } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Layout } from "~/components/ui/layout";
+import { api } from "~/utils/api";
 
 const schema = z.object({
   name: z
