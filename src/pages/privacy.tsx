@@ -127,11 +127,11 @@ const Privacy: NextPage = () => {
       <h3>5. Your Rights</h3>
 
       <p>
-        You have certain rights regarding your personal information, subject to
-        local data protection laws. These rights may include the right to
-        access, update, correct, or delete your information. If you have any
-        privacy-related concerns or wish to exercise your rights, please contact
-        us using the information provided below.
+        You have certain rights regarding your personal information under the UK
+        GDPR. These rights may include the right to access, update, correct, or
+        delete your information. If you have any privacy-related concerns or
+        wish to exercise your rights, please contact us using the information
+        provided below.
       </p>
 
       <h3>6. Children&apos;s Privacy</h3>
