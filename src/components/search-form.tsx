@@ -40,7 +40,7 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
   return (
     <Form {...form}>
       <form
-        className="mx-auto grid w-full grid-cols-1 gap-4 px-6 md:grid-cols-2"
+        className="mx-auto grid w-full grid-cols-1 gap-4 px-4 md:grid-cols-2"
         /* eslint-disable-next-line */
         onSubmit={form.handleSubmit(onSubmit)}
       >

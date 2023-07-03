@@ -11,8 +11,8 @@ export const Header = () => {
   const { data } = api.bars.getBySlug.useQuery({ slug }, { enabled: !!slug });
 
   return (
-    <header className="mx-auto flex max-w-6xl justify-between p-8">
-      <Link href="/" className="text-xl font-bold">
+    <header className="container flex justify-between p-8">
+      <Link href="/" className="text-l font-bold">
         Pouring at {data?.bar.name || "..."}
       </Link>
       {isSignedIn ? <LoggedInDropdown /> : <SignInButton />}
