@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
-import { Edit, Home, LogOut, Menu, User2 } from "lucide-react";
+import { LogOut, User2 } from "lucide-react";
 import { useRouter } from "next/router";
 import {
   DropdownMenu,
@@ -20,29 +20,19 @@ export const LoggedInDropdown = () => {
           className="inline-flex h-[35px] w-[35px] items-center justify-center outline-none"
           aria-label="Signed in dropdown menu"
         >
-          <Menu />
+          <User2 />
         </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="mx-2 w-56">
-        <DropdownMenuItem onSelect={() => void router.push("/")}>
-          <Home className="mr-2 h-4 w-4" />
-          Home
-        </DropdownMenuItem>
-
         <DropdownMenuItem onSelect={() => void router.push("/account")}>
           <User2 className="mr-2 h-4 w-4" />
           Account
         </DropdownMenuItem>
 
-        <DropdownMenuItem onSelect={() => void router.push("/manage")}>
-          <Edit className="mr-2 h-4 w-4" />
-          Manage Bars
-        </DropdownMenuItem>
-
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onSelect={() => void signOut()}>
+        <DropdownMenuItem onSelect={() => void signOut(() => router.push("/"))}>
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
         </DropdownMenuItem>
