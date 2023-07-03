@@ -35,7 +35,7 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
           <div className="flex justify-between">
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold">{bar.name}</h1>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-muted-foreground">
                 {bar.line1},{bar.line2 && ` ${bar.line2},`} {bar.city},{" "}
                 {bar.postcode}
               </p>
@@ -49,7 +49,7 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
 
           <h3 className="mt-8 text-xl font-bold">Tap list</h3>
           {bar.beverages.length === 0 ? (
-            <p className="text-slate-600">
+            <p className="text-muted-foreground">
               Nothing listed at {bar.name} yet, check back soon 🍺
             </p>
           ) : (

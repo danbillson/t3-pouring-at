@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <footer className="w-full border-t text-slate-900">
+    <footer className="w-full border-t">
       <div className="container p-8 pb-0 text-sm">
         Built by{" "}
         <a
@@ -23,7 +23,7 @@ export const Footer = () => {
           Support me
         </a>
       </div>
-      <div className="container p-8 text-sm text-slate-600 underline">
+      <div className="container p-8 text-sm text-muted-foreground underline">
         <Link href="/privacy">Privacy Policy</Link>
       </div>
     </footer>

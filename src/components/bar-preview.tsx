@@ -51,13 +51,13 @@ export const BarPreview = ({ bar, search }: BarPreviewProps) => {
       <CardContent>
         {bar.beverages.length > 0 && (
           <div>
-            <p className="mt-2 text-sm font-bold text-slate-800">Preview</p>
+            <p className="mt-2 text-sm font-bold">Preview</p>
             {bar.beverages
               .sort(byStyleAndBrewery(search?.style, search?.brewery))
               .slice(0, 4)
               .map(({ beverage }) => (
                 <div key={beverage.id}>
-                  <span className="text-xs text-slate-600">
+                  <span className="text-xs text-muted-foreground">
                     {beverage.brewery.name}{" "}
                     <span className="font-bold">{beverage.name}</span> -{" "}
                     {beverage.style}

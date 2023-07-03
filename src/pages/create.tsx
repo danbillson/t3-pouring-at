@@ -127,7 +127,7 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
             </Field>
           </div>
 
-          <div className="my-4 h-[1px] w-full bg-slate-500" />
+          <div className="my-4 h-[1px] w-full bg-border" />
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Field name="line1" label="Address line 1" control={form.control}>
@@ -147,11 +147,12 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
             </Field>
           </div>
 
-          <div className="my-4 h-[1px] w-full bg-slate-500" />
+          <div className="my-4 h-[1px] w-full bg-border" />
 
           <div className="flex flex-col">
             <FormLabel>
-              Opening Hours <span className="text-slate-500">(Optional)</span>
+              Opening Hours{" "}
+              <span className="text-muted-foreground">(Optional)</span>
             </FormLabel>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {days.map((day) => (
@@ -167,14 +168,15 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
             </div>
           </div>
 
-          <div className="my-4 h-[1px] w-full bg-slate-500" />
+          <div className="my-4 h-[1px] w-full bg-border" />
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Field
               name="url"
               label={
                 <>
-                  Website url <span className="text-slate-500">(Optional)</span>
+                  Website url{" "}
+                  <span className="text-muted-foreground">(Optional)</span>
                 </>
               }
               control={form.control}
@@ -198,6 +200,15 @@ const CreateBar: NextPage<CreateBarProps> = ({ userIsAdmin }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { userId } = getAuth(context.req);
   const user = userId ? await clerkClient.users.getUser(userId) : undefined;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: "/sign-in",
+        permanent: false,
+      },
+    };
+  }
 
   return { props: { userIsAdmin: user?.privateMetadata?.role === "admin" } };
 };

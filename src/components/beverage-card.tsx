@@ -34,7 +34,7 @@ export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
       className={`${
         isLoading && variables?.beverageId === beverageId
           ? "border-red-500"
-          : "border-black"
+          : "border-border"
       }`}
     >
       <CardHeader>
@@ -46,7 +46,7 @@ export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
           <span className="mr-2 text-sm">
             {String(beverage.abv)}%<span className="mx-1 text-xs">ABV</span>
           </span>
-          <span className="text-sm text-slate-900">{beverage.style}</span>
+          <span className="text-sm">{beverage.style}</span>
         </CardDescription>
       </CardHeader>
 

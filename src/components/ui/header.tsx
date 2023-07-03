@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { LoggedInDropdown } from "~/components/logged-in-dropdown";
 import { api } from "~/utils/api";
+import { ModeToggle } from "~/components/mode-toggle";
 
 export const Header = () => {
   const { isSignedIn } = useAuth();
@@ -15,7 +16,10 @@ export const Header = () => {
       <Link href="/" className="text-l font-bold">
         Pouring at {data?.bar.name || "..."}
       </Link>
-      {isSignedIn ? <LoggedInDropdown /> : <SignInButton />}
+      <div className="flex items-center gap-1">
+        {isSignedIn ? <LoggedInDropdown /> : <SignInButton />}
+        <ModeToggle />
+      </div>
     </header>
   );
 };
