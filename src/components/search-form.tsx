@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
+import { Combobox } from "~/components/ui/combobox";
 import { Field, Form } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { TypeAhead } from "~/components/ui/typeahead";
 import { cities } from "~/data/gb";
 
 const schema = z.object({
@@ -50,7 +50,7 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
           description="Search by town, city or postcode"
           control={form.control}
         >
-          <TypeAhead placeholder="Newcastle upon Tyne" options={cities} />
+          <Combobox placeholder="Newcastle upon Tyne" options={cities} />
         </Field>
 
         <Field name="style" label="Style" control={form.control}>

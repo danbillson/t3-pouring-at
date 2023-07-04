@@ -1,7 +1,7 @@
+import { useCombobox } from "downshift";
 import * as React from "react";
 import { cn } from "~/lib/utils";
 import { Input } from "./input";
-import { useClickAway } from "react-use";
 
 type ContentProps = {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ const Content = ({ className, open, children }: ContentProps) => {
   );
 };
 
-type TypeAheadProps = {
+type ComboboxProps = {
   options: string[];
   placeholder?: string;
   value?: string;
@@ -39,38 +39,49 @@ type TypeAheadProps = {
   minSearch?: number;
 };
 
-export const TypeAhead = ({
+export const Combobox = ({
   options,
   minSearch = 2,
   ...props
-}: TypeAheadProps) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [focused, setFocused] = React.useState(false);
-  const length = props.value?.length || 0;
-  const open = length >= minSearch && focused;
-  useClickAway(ref, () => setFocused(false));
-
-  const filteredOptions = options.filter(
-    (option) =>
-      option.toLowerCase().includes(props.value?.toLowerCase() || "") &&
-      option !== props.value
-  );
+}: ComboboxProps) => {
+  const [items, setItems] = React.useState(options);
+  const {
+    isOpen,
+    inputValue,
+    getMenuProps,
+    getInputProps,
+    highlightedIndex,
+    getItemProps,
+    selectedItem,
+  } = useCombobox({
+    onInputValueChange({ inputValue }) {
+      props?.onChange?.(inputValue);
+      setItems(
+        options.filter(
+          (option) =>
+            option.toLowerCase().includes(inputValue?.toLowerCase() || "") &&
+            option !== inputValue
+        )
+      );
+    },
+    items,
+  });
 
   return (
-    <div ref={ref} className="relative">
-      <Input {...props} onFocus={() => setFocused(true)} autoComplete="off" />
-      {open && filteredOptions.length !== 0 && (
-        <Content open={open}>
-          {filteredOptions.sort(byStartsWith(props.value)).map((option) => (
+    <div className="relative">
+      <Input {...props} {...getInputProps()} autoComplete="off" />
+      {isOpen && inputValue.length >= minSearch && items.length !== 0 && (
+        <Content open={isOpen} {...getMenuProps()}>
+          {items.sort(byStartsWith(props.value)).map((option, index) => (
             <div
-              key={option}
-              role="option"
-              aria-selected={props.value === option}
-              onClick={() => {
-                props.onChange?.(option);
-                setFocused(false);
-              }}
-              className="relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              key={`${option}${index}`}
+              {...getItemProps({ item: option, index })}
+              className={cn(
+                "relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+                highlightedIndex === index &&
+                  "bg-accent text-accent-foreground",
+                selectedItem === option && "bg-muted text-accent-foreground"
+              )}
             >
               {option}
             </div>

@@ -34,6 +34,7 @@
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "dayjs": "^1.11.8",
+    "downshift": "^7.6.0",
     "geolib": "^3.3.4",
     "google-maps-react-markers": "^1.2.3",
     "lucide-react": "^0.234.0",
