@@ -53,7 +53,7 @@ const Search: NextPage = () => {
         )}
         {data && bars.length > 0 ? (
           <>
-            <div className="grid w-full grid-cols-1 gap-4 px-6 md:grid-cols-2">
+            <div className="grid w-full grid-cols-1 gap-4 px-4 md:grid-cols-2">
               {bars.map((bar) => (
                 <BarPreview
                   key={bar.id}
