@@ -3,12 +3,6 @@ import * as React from "react";
 import { cn } from "~/lib/utils";
 import { Input } from "./input";
 
-type ContentProps = {
-  children: React.ReactNode;
-  open: boolean;
-  className?: string;
-};
-
 type ComboboxProps = {
   options: string[];
   placeholder?: string;
