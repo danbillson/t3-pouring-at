@@ -9,28 +9,6 @@ type ContentProps = {
   className?: string;
 };
 
-const Content = ({ className, open, children }: ContentProps) => {
-  return (
-    <div
-      role="listbox"
-      className={cn(
-        "absolute z-50 max-h-72 w-full min-w-[8rem] translate-y-1 overflow-scroll rounded-md border-2 bg-popover text-popover-foreground shadow-md slide-in-from-top-2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        className
-      )}
-      data-state={open ? "open" : "closed"}
-    >
-      <div
-        role="presentation"
-        className={cn(
-          "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] p-1"
-        )}
-      >
-        {children}
-      </div>
-    </div>
-  );
-};
-
 type ComboboxProps = {
   options: string[];
   placeholder?: string;
@@ -69,11 +47,11 @@ export const Combobox = ({
 
   return (
     <div className="relative">
-      <Input {...props} {...getInputProps()} autoComplete="off" />
+      <Input {...getInputProps(props)} autoComplete="off" />
       {isOpen && inputValue.length >= minSearch && items.length !== 0 && (
-        <Content open={isOpen} {...getMenuProps()}>
+        <ul className="absolute z-50 max-h-72 w-full min-w-[8rem] translate-y-1 overflow-scroll rounded-md border-2 bg-popover text-popover-foreground shadow-md slide-in-from-top-2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95" {...getMenuProps()}>
           {items.sort(byStartsWith(props.value)).map((option, index) => (
-            <div
+            <li
               key={`${option}${index}`}
               {...getItemProps({ item: option, index })}
               className={cn(
@@ -84,10 +62,10 @@ export const Combobox = ({
               )}
             >
               {option}
-            </div>
+            </li>
           ))}
-        </Content>
-      )}
+        </ul>
+      )} 
     </div>
   );
 };
