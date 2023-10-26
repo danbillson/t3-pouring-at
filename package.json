@@ -38,7 +38,7 @@
     "geolib": "^3.3.4",
     "google-maps-react-markers": "^1.2.4",
     "lucide-react": "^0.258.0",
-    "next": "^13.4.8",
+    "next": "^14.0.0",
     "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
