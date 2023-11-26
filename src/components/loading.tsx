@@ -1,13 +1,11 @@
-import { Skeleton } from "~/components/ui/skeleton";
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export const LoadingBarPreview = () => {
   return (
