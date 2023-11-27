@@ -29,6 +29,7 @@ model Bar {
     latitude     Float
     openingHours Json          @map("opening_hours")
     url          String?
+    branding     Json?
     updated      DateTime
     verified     Boolean       @default(false)
     staff        BarStaff[]
