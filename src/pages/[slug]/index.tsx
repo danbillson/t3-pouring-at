@@ -41,9 +41,14 @@ const Bar: NextPage<{ slug: string }> = ({ slug }) => {
               </p>
             </div>
             {isOwner && (
-              <Button variant="secondary" asChild>
-                <Link href={`/${bar.slug}/edit`}>Edit</Link>
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="ghost" asChild>
+                  <Link href={`/${bar.slug}/branding`}>Branding</Link>
+                </Button>
+                <Button variant="secondary" asChild>
+                  <Link href={`/${bar.slug}/edit`}>Edit</Link>
+                </Button>
+              </div>
             )}
           </div>
 

@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -10,6 +11,7 @@ import {
 } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
 import { geocode } from "~/utils/maps";
+import merge from "deepmerge";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -118,7 +120,7 @@ export const barsRouter = createTRPCRouter({
           sunday: z.string().optional(),
         }),
         url: z.string().url().optional().or(z.literal("")),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (reserverdSlugs.includes(input.slug)) {
@@ -132,7 +134,7 @@ export const barsRouter = createTRPCRouter({
         `${input.line1},${input.line2 ? ` ${input.line2} ,` : ""} ${
           input.city
         }, ${input.postcode}`,
-        env.GOOGLE_MAPS_SERVER_KEY
+        env.GOOGLE_MAPS_SERVER_KEY,
       );
 
       if (status !== "OK" || !results.length || !results[0]) {
@@ -205,7 +207,7 @@ export const barsRouter = createTRPCRouter({
         location: z.string(),
         style: z.string().optional(),
         brewery: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       if (ctx.ip) {
@@ -221,7 +223,7 @@ export const barsRouter = createTRPCRouter({
 
       const { results, status } = await geocode(
         input.location,
-        env.GOOGLE_MAPS_SERVER_KEY
+        env.GOOGLE_MAPS_SERVER_KEY,
       );
 
       if (status !== "OK" || !results.length || !results[0]) {
@@ -264,6 +266,52 @@ export const barsRouter = createTRPCRouter({
       });
 
       return { bars, location: { lng, lat } };
+    }),
+  updateBranding: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        logo: z.string().optional(),
+        colours: z
+          .object({
+            foreground: z.string().optional(),
+            background: z.string().optional(),
+            accent: z.string().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const bar = await ctx.prisma.bar.findFirst({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!bar) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bar not found",
+        });
+      }
+
+      const branding = bar.branding as Prisma.JsonObject;
+      const { id: _, ...rest } = input;
+
+      const mergedBranding = merge(branding, rest);
+
+      const updatedBar = await ctx.prisma.bar.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          branding: mergedBranding,
+        },
+      });
+
+      return {
+        bar: updatedBar,
+      };
     }),
 });
 
