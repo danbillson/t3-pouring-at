@@ -1,5 +1,4 @@
 import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
-import { sql } from "drizzle-orm";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
