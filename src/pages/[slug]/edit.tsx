@@ -9,7 +9,7 @@ import { BeverageList } from "~/components/beverage-list";
 import { Marker } from "~/components/marker";
 import { Button } from "~/components/ui/button";
 import { Layout } from "~/components/ui/layout";
-import { db } from "~/db";
+import { db, schema } from "~/db";
 import { api } from "~/utils/api";
 
 const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
@@ -92,10 +92,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       and(
         eq(bar.slug, slug),
         exists(
-          sql`select * 
-            from staff s 
-            where s.bar_id = ${bar.id} 
-              and s.user_id = ${userId}`,
+          db
+            .select()
+            .from(schema.barStaff)
+            .where(
+              and(
+                eq(schema.barStaff.barId, bar.id),
+                eq(schema.barStaff.staffId, userId),
+              ),
+            ),
         ),
       ),
   });

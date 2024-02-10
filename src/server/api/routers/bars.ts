@@ -146,7 +146,6 @@ export const barsRouter = createTRPCRouter({
         latitude: result.geometry.location.lat,
         openingHours: input.openingHours,
         url: input.url,
-        updated: new Date().toISOString(),
       } satisfies typeof ctx.schema.bar.$inferInsert);
 
       const bar = await ctx.db.query.bar.findFirst({
@@ -186,7 +185,7 @@ export const barsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await ctx.db
         .update(ctx.schema.bar)
-        .set({ verified: true })
+        .set({ verified: true, updated: new Date() })
         .where(eq(ctx.schema.bar.id, input.id));
 
       const bar = await ctx.db.query.bar.findFirst({
@@ -239,22 +238,11 @@ export const barsRouter = createTRPCRouter({
       const [result] = results;
       const { lng, lat } = result.geometry.location;
 
-      const query = await ctx.db
-        .select({ id: ctx.schema.bar.id })
-        .from(ctx.schema.bar)
-        .where(
-          sql`ST_Distance_Sphere(POINT(${lng}, ${lat}), POINT(longitude, latitude)) < 1609`,
-        )
-        .execute();
-
       const bars = await ctx.db.query.bar.findMany({
-        where: (bar, { inArray, and, eq }) =>
+        where: (bar, { and, eq }) =>
           and(
-            inArray(
-              bar.id,
-              query.map((bar) => bar.id),
-            ),
             eq(bar.verified, true),
+            sql`ST_Distance_Sphere(POINT(${lng}, ${lat}), POINT(longitude, latitude)) < 1609`,
           ),
 
         with: {
@@ -307,7 +295,7 @@ export const barsRouter = createTRPCRouter({
 
       await ctx.db
         .update(ctx.schema.bar)
-        .set({ branding: mergedBranding })
+        .set({ branding: mergedBranding, updated: new Date() })
         .where(eq(ctx.schema.bar.id, input.id));
 
       const updatedBar = await ctx.db.query.bar.findFirst({

@@ -12,6 +12,16 @@ import {
 import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 
+type OpeningHours = {
+  monday?: string;
+  tuesday?: string;
+  wednesday?: string;
+  thursday?: string;
+  friday?: string;
+  saturday?: string;
+  sunday?: string;
+};
+
 export const bar = mysqlTable(
   "Bar",
   {
@@ -26,7 +36,7 @@ export const bar = mysqlTable(
     postcode: varchar("postcode", { length: 191 }).notNull(),
     longitude: double("longitude").notNull(),
     latitude: double("latitude").notNull(),
-    openingHours: json("opening_hours").notNull(),
+    openingHours: json("opening_hours").$type<OpeningHours>().notNull(),
     url: varchar("url", { length: 191 }),
     branding: json("branding").$type<{
       logo?: string;
@@ -36,7 +46,9 @@ export const bar = mysqlTable(
         accent?: string;
       };
     }>(),
-    updated: datetime("updated", { mode: "string", fsp: 3 }).notNull(),
+    updated: datetime("updated", { fsp: 3 })
+      .$defaultFn(() => new Date())
+      .notNull(),
     verified: boolean("verified").default(false).notNull(),
   },
   (table) => {
@@ -57,12 +69,8 @@ export const barRelations = relations(bar, ({ many }) => ({
 export const barBeverage = mysqlTable(
   "BarBeverage",
   {
-    barId: varchar("bar_id", { length: 191 })
-      .notNull()
-      .references(() => bar.id),
-    beverageId: varchar("beverage_id", { length: 191 })
-      .notNull()
-      .references(() => beverage.id),
+    barId: varchar("bar_id", { length: 191 }).notNull(),
+    beverageId: varchar("beverage_id", { length: 191 }).notNull(),
     tappedOn: datetime("tappedOn", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
@@ -83,8 +91,14 @@ export const barBeverage = mysqlTable(
 export type BarBeverage = typeof barBeverage.$inferSelect;
 
 export const barBeverageRelations = relations(barBeverage, ({ one }) => ({
-  bar: one(bar),
-  beverage: one(beverage),
+  bar: one(bar, {
+    fields: [barBeverage.barId],
+    references: [bar.id],
+  }),
+  beverage: one(beverage, {
+    fields: [barBeverage.beverageId],
+    references: [beverage.id],
+  }),
 }));
 
 export const barStaff = mysqlTable(
@@ -94,9 +108,7 @@ export const barStaff = mysqlTable(
       .$defaultFn(() => createId())
       .notNull(),
     staffId: varchar("staff_id", { length: 191 }).notNull(),
-    barId: varchar("bar_id", { length: 191 })
-      .notNull()
-      .references(() => bar.id),
+    barId: varchar("bar_id", { length: 191 }).notNull(),
   },
   (table) => {
     return {
@@ -109,7 +121,10 @@ export const barStaff = mysqlTable(
 export type BarStaff = typeof barStaff.$inferSelect;
 
 export const barStaffRelations = relations(barStaff, ({ one }) => ({
-  bar: one(bar),
+  bar: one(bar, {
+    fields: [barStaff.barId],
+    references: [bar.id],
+  }),
 }));
 
 export const beverage = mysqlTable(
@@ -121,9 +136,7 @@ export const beverage = mysqlTable(
     name: varchar("name", { length: 191 }).notNull(),
     abv: varchar("abv", { length: 191 }).notNull(),
     style: varchar("style", { length: 191 }).notNull(),
-    breweryId: varchar("brewery_id", { length: 191 })
-      .notNull()
-      .references(() => brewery.id),
+    breweryId: varchar("brewery_id", { length: 191 }).notNull(),
     verified: boolean("verified").default(false).notNull(),
   },
   (table) => {
@@ -137,7 +150,10 @@ export const beverage = mysqlTable(
 export type Beverage = typeof beverage.$inferSelect;
 
 export const beverageRelations = relations(beverage, ({ one, many }) => ({
-  brewery: one(brewery),
+  brewery: one(brewery, {
+    fields: [beverage.breweryId],
+    references: [brewery.id],
+  }),
   barBeverage: many(barBeverage),
 }));
 

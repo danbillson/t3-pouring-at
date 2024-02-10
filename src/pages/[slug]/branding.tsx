@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ColourPicker } from "~/components/colour-picker";
 import { Button } from "~/components/ui/button";
 import { Layout } from "~/components/ui/layout";
-import { db } from "~/db";
+import { db, schema } from "~/db";
 import { api } from "~/utils/api";
 
 type Branding = {
@@ -131,10 +131,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       and(
         eq(bar.slug, slug),
         exists(
-          sql`select * 
-            from staff s 
-            where s.bar_id = ${bar.id} 
-              and s.user_id = ${userId}`,
+          db
+            .select()
+            .from(schema.barStaff)
+            .where(
+              and(
+                eq(schema.barStaff.barId, bar.id),
+                eq(schema.barStaff.staffId, userId),
+              ),
+            ),
         ),
       ),
   });
