@@ -7,7 +7,7 @@ import { TRPCError, initTRPC, type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { prisma } from "~/server/db";
+import { db, schema } from "~/db";
 import requestIp from "request-ip";
 
 interface TRPCContext {
@@ -18,7 +18,8 @@ interface TRPCContext {
 const createInnerTRPCContext = ({ auth, ip }: TRPCContext) => {
   return {
     auth,
-    prisma,
+    db,
+    schema,
     ip,
   };
 };

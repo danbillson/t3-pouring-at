@@ -11,7 +11,7 @@ The idea came from a trip to Bristol where I had a day to myself but couldn't ea
 This project was bootstrapped with [T3](https://create.t3.gg/) and uses the following tech
 
 - [Next.js](https://nextjs.org)
-- [Prisma](https://prisma.io)
+- [Drizzle](https://orm.drizzle.team)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 - [shadcn/ui](https://ui.shadcn.com)

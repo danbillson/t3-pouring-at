@@ -1,11 +1,12 @@
 import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
+import { sql } from "drizzle-orm";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { ColourPicker } from "~/components/colour-picker";
 import { Button } from "~/components/ui/button";
 import { Layout } from "~/components/ui/layout";
-import { prisma } from "~/server/db";
+import { db } from "~/db";
 import { api } from "~/utils/api";
 
 type Branding = {
@@ -23,7 +24,7 @@ const BarBranding: NextPage<{ slug: string }> = ({ slug }) => {
   const { mutate, isLoading: isUpdating } = api.bars.updateBranding.useMutation(
     {
       onSettled: () => {
-        refetch();
+        void refetch();
       },
     },
   );
@@ -124,15 +125,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const slug = context.params?.slug as string;
-  const bar = await prisma.bar.findFirst({
-    where: {
-      slug,
-      staff: {
-        some: {
-          staffId: userId,
-        },
-      },
-    },
+
+  const bar = await db.query.bar.findFirst({
+    where: (bar, { eq, exists, and }) =>
+      and(
+        eq(bar.slug, slug),
+        exists(
+          sql`select * 
+            from staff s 
+            where s.bar_id = ${bar.id} 
+              and s.user_id = ${userId}`,
+        ),
+      ),
   });
 
   if (!bar) {

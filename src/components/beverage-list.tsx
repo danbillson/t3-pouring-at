@@ -1,8 +1,10 @@
-import type { BarBeverage, Beverage, Brewery } from "@prisma/client";
+import type { BarBeverage, Beverage, Brewery } from "~/db/schema";
 import { BeverageCard } from "~/components/beverage-card";
 
 type BeverageListProps = {
-  beverages: (BarBeverage & { beverage: Beverage & { brewery: Brewery } })[];
+  beverages: (BarBeverage & {
+    beverage: (Beverage & { brewery: Brewery | null }) | null;
+  })[];
   edit?: boolean;
 };
 

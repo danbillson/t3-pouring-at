@@ -1,4 +1,4 @@
-import type { Bar, BarBeverage, Beverage, Brewery } from "@prisma/client";
+import type { Bar, BarBeverage, Beverage, Brewery } from "~/db/schema";
 import Map from "google-maps-react-markers";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
@@ -28,7 +28,7 @@ const Search: NextPage = () => {
     {
       enabled: !!location,
       retry: false,
-    }
+    },
   );
 
   const bars =
@@ -96,20 +96,22 @@ const prettyError = (error: { message: string } | undefined) => {
 };
 
 type BarWithBeverages = Bar & {
-  beverages: (BarBeverage & { beverage: Beverage & { brewery: Brewery } })[];
+  beverages: (BarBeverage & {
+    beverage: (Beverage & { brewery: Brewery | null }) | null;
+  })[];
 };
 
 const hasBeerStyle = (style?: string) => (bar: BarWithBeverages) => {
   if (!style) return true;
-  return bar.beverages.some((beverage) =>
-    beverage.beverage.style.includes(style)
+  return bar.beverages.some(
+    (beverage) => beverage.beverage?.style.includes(style),
   );
 };
 
 const hasBrewery = (brewery?: string) => (bar: BarWithBeverages) => {
   if (!brewery) return true;
-  return bar.beverages.some((beverage) =>
-    beverage.beverage.brewery.name.includes(brewery)
+  return bar.beverages.some(
+    (beverage) => beverage.beverage?.brewery?.name.includes(brewery),
   );
 };
 

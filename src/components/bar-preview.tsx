@@ -1,4 +1,4 @@
-import type { Bar, BarBeverage, Beverage, Brewery } from "@prisma/client";
+import type { Bar, BarBeverage, Beverage, Brewery } from "~/db/schema";
 import { getDistance } from "geolib";
 import Link from "next/link";
 import {
@@ -12,7 +12,9 @@ import {
 import { Button } from "~/components/ui/button";
 
 type BarWithBeverages = Bar & {
-  beverages: (BarBeverage & { beverage: Beverage & { brewery: Brewery } })[];
+  beverages: (BarBeverage & {
+    beverage: (Beverage & { brewery: Brewery | null }) | null;
+  })[];
 };
 
 type BarPreviewProps = {
@@ -42,7 +44,7 @@ export const BarPreview = ({ bar, search }: BarPreviewProps) => {
                 {
                   latitude: search.location.lat,
                   longitude: search.location.lng,
-                }
+                },
               ) / 1609
             ).toFixed(2)} miles)`}
         </CardDescription>
@@ -55,15 +57,19 @@ export const BarPreview = ({ bar, search }: BarPreviewProps) => {
             {bar.beverages
               .sort(byStyleAndBrewery(search?.style, search?.brewery))
               .slice(0, 4)
-              .map(({ beverage }) => (
-                <div key={beverage.id}>
-                  <span className="text-xs text-muted-foreground">
-                    {beverage.brewery.name}{" "}
-                    <span className="font-bold">{beverage.name}</span> -{" "}
-                    {beverage.style}
-                  </span>
-                </div>
-              ))}
+              .map(
+                ({ beverage }) =>
+                  beverage &&
+                  beverage.brewery && (
+                    <div key={beverage.id}>
+                      <span className="text-xs text-muted-foreground">
+                        {beverage.brewery.name}{" "}
+                        <span className="font-bold">{beverage.name}</span> -{" "}
+                        {beverage.style}
+                      </span>
+                    </div>
+                  ),
+              )}
           </div>
         )}
       </CardContent>
@@ -80,7 +86,7 @@ export const BarPreview = ({ bar, search }: BarPreviewProps) => {
 };
 
 type BeverageWithBrewery = BarBeverage & {
-  beverage: Beverage & { brewery: Brewery };
+  beverage: (Beverage & { brewery: Brewery | null }) | null;
 };
 
 const byStyleAndBrewery =
@@ -88,20 +94,20 @@ const byStyleAndBrewery =
   (a: BeverageWithBrewery, b: BeverageWithBrewery) => {
     if (!style && !brewery) return 0;
     if (style && !brewery) {
-      if (a.beverage.style.includes(style)) return -1;
-      if (b.beverage.style.includes(style)) return 1;
+      if (a.beverage?.style.includes(style)) return -1;
+      if (b.beverage?.style.includes(style)) return 1;
       return 0;
     }
     if (!style && brewery) {
-      if (a.beverage.brewery.name.includes(brewery)) return -1;
-      if (b.beverage.brewery.name.includes(brewery)) return 1;
+      if (a.beverage?.brewery?.name.includes(brewery)) return -1;
+      if (b.beverage?.brewery?.name.includes(brewery)) return 1;
       return 0;
     }
     if (style && brewery) {
-      if (a.beverage.style.includes(style)) return -1;
-      if (b.beverage.style.includes(style)) return 1;
-      if (a.beverage.brewery.name.includes(brewery)) return -1;
-      if (b.beverage.brewery.name.includes(brewery)) return 1;
+      if (a.beverage?.style.includes(style)) return -1;
+      if (b.beverage?.style.includes(style)) return 1;
+      if (a.beverage?.brewery?.name.includes(brewery)) return -1;
+      if (b.beverage?.brewery?.name.includes(brewery)) return 1;
       return 0;
     }
     return 0;

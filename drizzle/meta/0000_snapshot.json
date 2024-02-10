@@ -1,0 +1,360 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "Bar": {
+      "name": "Bar",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "autoincrement": false,
+          "name": "slug",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "line1": {
+          "autoincrement": false,
+          "name": "line1",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "line2": {
+          "autoincrement": false,
+          "name": "line2",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "autoincrement": false,
+          "name": "city",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "postcode": {
+          "autoincrement": false,
+          "name": "postcode",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "autoincrement": false,
+          "name": "longitude",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "autoincrement": false,
+          "name": "latitude",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "opening_hours": {
+          "autoincrement": false,
+          "name": "opening_hours",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "autoincrement": false,
+          "name": "url",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "branding": {
+          "autoincrement": false,
+          "name": "branding",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated": {
+          "autoincrement": false,
+          "name": "updated",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verified": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "verified",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "Bar_id": {
+          "name": "Bar_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "Bar_slug_key": {
+          "name": "Bar_slug_key",
+          "columns": [
+            "slug"
+          ]
+        }
+      }
+    },
+    "BarBeverage": {
+      "name": "BarBeverage",
+      "columns": {
+        "bar_id": {
+          "autoincrement": false,
+          "name": "bar_id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "beverage_id": {
+          "autoincrement": false,
+          "name": "beverage_id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tappedOn": {
+          "default": "CURRENT_TIMESTAMP(3)",
+          "autoincrement": false,
+          "name": "tappedOn",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tappedOff": {
+          "autoincrement": false,
+          "name": "tappedOff",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "BarBeverage_bar_id_beverage_id": {
+          "name": "BarBeverage_bar_id_beverage_id",
+          "columns": [
+            "bar_id",
+            "beverage_id"
+          ]
+        }
+      },
+      "indexes": {
+        "BarBeverage_bar_id_idx": {
+          "name": "BarBeverage_bar_id_idx",
+          "columns": [
+            "bar_id"
+          ],
+          "isUnique": false
+        },
+        "BarBeverage_beverage_id_idx": {
+          "name": "BarBeverage_beverage_id_idx",
+          "columns": [
+            "beverage_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "BarStaff": {
+      "name": "BarStaff",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "staff_id": {
+          "autoincrement": false,
+          "name": "staff_id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bar_id": {
+          "autoincrement": false,
+          "name": "bar_id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "BarStaff_id": {
+          "name": "BarStaff_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "BarStaff_bar_id_idx": {
+          "name": "BarStaff_bar_id_idx",
+          "columns": [
+            "bar_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Beverage": {
+      "name": "Beverage",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "abv": {
+          "autoincrement": false,
+          "name": "abv",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "style": {
+          "autoincrement": false,
+          "name": "style",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "brewery_id": {
+          "autoincrement": false,
+          "name": "brewery_id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verified": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "verified",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "Beverage_id": {
+          "name": "Beverage_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "Beverage_brewery_id_idx": {
+          "name": "Beverage_brewery_id_idx",
+          "columns": [
+            "brewery_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Brewery": {
+      "name": "Brewery",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "autoincrement": false,
+          "name": "url",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "autoincrement": false,
+          "name": "location",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "Brewery_id": {
+          "name": "Brewery_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "Brewery_name_key": {
+          "name": "Brewery_name_key",
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

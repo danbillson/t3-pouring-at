@@ -1,4 +1,5 @@
 import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
+import { sql } from "drizzle-orm";
 import Map from "google-maps-react-markers";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
@@ -8,7 +9,7 @@ import { BeverageList } from "~/components/beverage-list";
 import { Marker } from "~/components/marker";
 import { Button } from "~/components/ui/button";
 import { Layout } from "~/components/ui/layout";
-import { prisma } from "~/server/db";
+import { db } from "~/db";
 import { api } from "~/utils/api";
 
 const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
@@ -86,15 +87,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const slug = context.params?.slug as string;
-  const bar = await prisma.bar.findFirst({
-    where: {
-      slug,
-      staff: {
-        some: {
-          staffId: userId,
-        },
-      },
-    },
+  const bar = await db.query.bar.findFirst({
+    where: (bar, { eq, exists, and }) =>
+      and(
+        eq(bar.slug, slug),
+        exists(
+          sql`select * 
+            from staff s 
+            where s.bar_id = ${bar.id} 
+              and s.user_id = ${userId}`,
+        ),
+      ),
   });
 
   if (!bar) {

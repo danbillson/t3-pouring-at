@@ -1,4 +1,3 @@
-import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -9,9 +8,9 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { prisma } from "~/server/db";
 import { geocode } from "~/utils/maps";
 import merge from "deepmerge";
+import { eq, sql } from "drizzle-orm";
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -23,14 +22,12 @@ export const barsRouter = createTRPCRouter({
   getByUserId: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input, ctx }) => {
-      const bars = await ctx.prisma.bar.findMany({
-        where: {
-          staff: {
-            some: {
-              staffId: input.userId,
-            },
-          },
-        },
+      const staff = ctx.schema.barStaff;
+      const bars = await ctx.db.query.bar.findMany({
+        where: (_, { exists }) =>
+          exists(
+            ctx.db.select().from(staff).where(eq(staff.staffId, input.userId)),
+          ),
       });
 
       return {
@@ -40,11 +37,9 @@ export const barsRouter = createTRPCRouter({
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
-      const bar = await ctx.prisma.bar.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
+      const bar = await ctx.db.query.bar.findFirst({
+        where: (bar, { eq }) => eq(bar.id, input.id),
+        with: {
           staff: true,
         },
       });
@@ -63,26 +58,20 @@ export const barsRouter = createTRPCRouter({
   getBySlug: publicProcedure
     .input(z.object({ slug: z.string() }))
     .query(async ({ input, ctx }) => {
-      const bar = await ctx.prisma.bar.findUnique({
-        where: {
-          slug: input.slug,
-        },
-        include: {
+      const bar = await ctx.db.query.bar.findFirst({
+        where: (bar, { eq }) => eq(bar.slug, input.slug),
+        with: {
           staff: true,
           beverages: {
-            where: {
-              tappedOff: null,
-            },
-            include: {
+            where: (bev, { isNull }) => isNull(bev.tappedOff),
+            with: {
               beverage: {
-                include: {
+                with: {
                   brewery: true,
                 },
               },
             },
-            orderBy: {
-              tappedOn: "desc",
-            },
+            orderBy: (bev, { desc }) => [desc(bev.tappedOn)],
           },
         },
       });
@@ -146,37 +135,44 @@ export const barsRouter = createTRPCRouter({
 
       const [result] = results;
 
-      const bar = await ctx.prisma.bar.create({
-        data: {
-          name: input.name,
-          slug: input.slug,
-          line1: input.line1,
-          line2: input.line2,
-          city: input.city,
-          postcode: input.postcode,
-          longitude: result.geometry.location.lng,
-          latitude: result.geometry.location.lat,
-          openingHours: input.openingHours,
-          url: input.url,
-          updated: new Date(),
-          staff: {
-            create: {
-              staffId: ctx.auth.userId,
-            },
-          },
-        },
+      await ctx.db.insert(ctx.schema.bar).values({
+        name: input.name,
+        slug: input.slug,
+        line1: input.line1,
+        line2: input.line2,
+        city: input.city,
+        postcode: input.postcode,
+        longitude: result.geometry.location.lng,
+        latitude: result.geometry.location.lat,
+        openingHours: input.openingHours,
+        url: input.url,
+        updated: new Date().toISOString(),
+      } satisfies typeof ctx.schema.bar.$inferInsert);
+
+      const bar = await ctx.db.query.bar.findFirst({
+        where: (bar, { eq }) => eq(bar.slug, input.slug),
       });
+
+      if (!bar) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create bar",
+        });
+      }
+
+      await ctx.db.insert(ctx.schema.barStaff).values({
+        barId: bar.id,
+        staffId: ctx.auth.userId,
+      } satisfies typeof ctx.schema.barStaff.$inferInsert);
 
       return {
         bar,
       };
     }),
   getAllUnverified: protectedProcedure.query(async ({ ctx }) => {
-    const bars = await ctx.prisma.bar.findMany({
-      where: {
-        verified: false,
-      },
-      include: {
+    const bars = await ctx.db.query.bar.findMany({
+      where: (bar, { eq }) => eq(bar.verified, false),
+      with: {
         staff: true,
       },
     });
@@ -188,14 +184,21 @@ export const barsRouter = createTRPCRouter({
   verify: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const bar = await ctx.prisma.bar.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          verified: true,
-        },
+      await ctx.db
+        .update(ctx.schema.bar)
+        .set({ verified: true })
+        .where(eq(ctx.schema.bar.id, input.id));
+
+      const bar = await ctx.db.query.bar.findFirst({
+        where: (bar, { eq }) => eq(bar.id, input.id),
       });
+
+      if (!bar) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bar not found",
+        });
+      }
 
       return {
         bar,
@@ -236,31 +239,35 @@ export const barsRouter = createTRPCRouter({
       const [result] = results;
       const { lng, lat } = result.geometry.location;
 
-      const query = await prisma.$queryRaw<Array<{ id: string }>>`
-        SELECT id FROM Bar WHERE ST_Distance_Sphere(POINT(${lng}, ${lat}), POINT(longitude, latitude)) < 1609;`;
+      const query = await ctx.db
+        .select({ id: ctx.schema.bar.id })
+        .from(ctx.schema.bar)
+        .where(
+          sql`ST_Distance_Sphere(POINT(${lng}, ${lat}), POINT(longitude, latitude)) < 1609`,
+        )
+        .execute();
 
-      const bars = await ctx.prisma.bar.findMany({
-        where: {
-          id: {
-            in: query.map((bar) => bar.id),
-          },
-          verified: true,
-        },
-        include: {
+      const bars = await ctx.db.query.bar.findMany({
+        where: (bar, { inArray, and, eq }) =>
+          and(
+            inArray(
+              bar.id,
+              query.map((bar) => bar.id),
+            ),
+            eq(bar.verified, true),
+          ),
+
+        with: {
           beverages: {
-            where: {
-              tappedOff: null,
-            },
-            include: {
+            where: (bev, { isNull }) => isNull(bev.tappedOff),
+            with: {
               beverage: {
-                include: {
+                with: {
                   brewery: true,
                 },
               },
             },
-            orderBy: {
-              tappedOn: "desc",
-            },
+            orderBy: (bev, { desc }) => [desc(bev.tappedOn)],
           },
         },
       });
@@ -282,10 +289,8 @@ export const barsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const bar = await ctx.prisma.bar.findFirst({
-        where: {
-          id: input.id,
-        },
+      const bar = await ctx.db.query.bar.findFirst({
+        where: (bar, { eq }) => eq(bar.id, input.id),
       });
 
       if (!bar) {
@@ -295,18 +300,18 @@ export const barsRouter = createTRPCRouter({
         });
       }
 
-      const branding = bar.branding as Prisma.JsonObject;
+      const branding = bar.branding ?? {};
       const { id: _, ...rest } = input;
 
       const mergedBranding = merge(branding, rest);
 
-      const updatedBar = await ctx.prisma.bar.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          branding: mergedBranding,
-        },
+      await ctx.db
+        .update(ctx.schema.bar)
+        .set({ branding: mergedBranding })
+        .where(eq(ctx.schema.bar.id, input.id));
+
+      const updatedBar = await ctx.db.query.bar.findFirst({
+        where: (bar, { eq }) => eq(bar.id, input.id),
       });
 
       return {

@@ -1,4 +1,4 @@
-import type { BarBeverage, Beverage, Brewery } from "@prisma/client";
+import type { BarBeverage, Beverage, Brewery } from "~/db/schema";
 import { api } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import dayjs from "dayjs";
@@ -15,7 +15,9 @@ import {
 dayjs.extend(relativeTime);
 
 type BeverageCardProps = {
-  barBeverage: BarBeverage & { beverage: Beverage & { brewery: Brewery } };
+  barBeverage: BarBeverage & {
+    beverage: (Beverage & { brewery: Brewery | null }) | null;
+  };
   edit?: boolean;
   deleting?: boolean;
 };
@@ -28,7 +30,10 @@ export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
       void ctx.bars.getBySlug.invalidate();
     },
   });
-
+  if (!beverage || !beverage.brewery) {
+    // TODO: Logo error
+    return null;
+  }
   return (
     <Card
       className={`${
@@ -44,7 +49,7 @@ export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
         </CardTitle>
         <CardDescription>
           <span className="mr-2 text-sm">
-            {String(beverage.abv)}%<span className="mx-1 text-xs">ABV</span>
+            {String(beverage?.abv)}%<span className="mx-1 text-xs">ABV</span>
           </span>
           <span className="text-sm">{beverage.style}</span>
         </CardDescription>
