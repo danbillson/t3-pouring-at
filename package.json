@@ -1,6 +1,6 @@
 {
   "name": "pouring-at",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -44,17 +44,19 @@
     "geolib": "^3.3.4",
     "google-maps-react-markers": "^2.0.7",
     "lucide-react": "^0.293.0",
-    "next": "^14.0.3",
+    "next": "^14.1.0",
     "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-color": "^2.19.3",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.48.2",
     "request-ip": "^3.3.0",
+    "server-only": "^0.0.1",
     "superjson": "2.2.1",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@types/eslint": "^8.44.7",
@@ -68,15 +70,12 @@
     "autoprefixer": "^10.4.16",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8.54.0",
-    "eslint-config-next": "^14.0.3",
+    "eslint-config-next": "^14.1.0",
     "mysql2": "^3.9.1",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.3.2"
-  },
-  "ct3aMetadata": {
-    "initVersion": "7.13.1"
   }
 }

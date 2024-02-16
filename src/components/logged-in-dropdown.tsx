@@ -1,6 +1,7 @@
+"use client";
 import { useAuth } from "@clerk/nextjs";
 import { LogOut, User2 } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,

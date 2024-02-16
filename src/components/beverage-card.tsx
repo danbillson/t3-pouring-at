@@ -1,5 +1,5 @@
+"use client";
 import type { BarBeverage, Beverage, Brewery } from "~/db/schema";
-import { api } from "~/utils/api";
 import { Button } from "~/components/ui/button";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -11,6 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { useTransition } from "react";
+import { untapBeverage } from "~/db/mutations";
 
 dayjs.extend(relativeTime);
 
@@ -24,24 +26,19 @@ type BeverageCardProps = {
 
 export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
   const { barId, beverageId, beverage, tappedOn } = barBeverage;
-  const ctx = api.useContext();
-  const { mutate, isLoading, variables } = api.barBeverage.untap.useMutation({
-    onSuccess: () => {
-      void ctx.bars.getBySlug.invalidate();
-    },
-  });
+  const [isLoading, startTransition] = useTransition();
+  const mutate = (barId: string, beverageId: string) => {
+    startTransition(async () => {
+      await untapBeverage(barId, beverageId);
+    });
+  };
+
   if (!beverage || !beverage.brewery) {
-    // TODO: Logo error
+    // TODO: Log error
     return null;
   }
   return (
-    <Card
-      className={`${
-        isLoading && variables?.beverageId === beverageId
-          ? "border-red-500"
-          : "border-border"
-      }`}
-    >
+    <Card className={`${isLoading ? "border-red-500" : "border-border"}`}>
       <CardHeader>
         <CardTitle>
           <span className="font-normal">{beverage.brewery.name}</span>{" "}
@@ -68,7 +65,7 @@ export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
             variant="ghost"
             disabled={isLoading}
             onClick={() => {
-              mutate({ barId, beverageId });
+              mutate(barId, beverageId);
             }}
           >
             Untap

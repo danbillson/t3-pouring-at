@@ -1,6 +1,7 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
@@ -18,12 +19,13 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 type SearchFormProps = {
-  defaultValues?: FormValues;
   loading?: boolean;
 };
 
-export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
+export const SearchForm = ({ loading }: SearchFormProps) => {
   const router = useRouter();
+  const defaultValues = useParams<FormValues>() ?? undefined;
+
   const form = useForm<FormValues>({
     defaultValues,
     resolver: zodResolver(schema),
@@ -33,7 +35,7 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
     void router.push(
       `/search?location=${encodeURIComponent(location)}${
         style ? `&style=${encodeURIComponent(style)}` : ""
-      }${brewery ? `&brewery=${encodeURIComponent(brewery)}` : ""}`
+      }${brewery ? `&brewery=${encodeURIComponent(brewery)}` : ""}`,
     );
   };
 
@@ -41,8 +43,7 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
     <Form {...form}>
       <form
         className="mx-auto grid w-full grid-cols-1 gap-4 px-4 md:grid-cols-2"
-        /* eslint-disable-next-line */
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
       >
         <Field
           name="location"
