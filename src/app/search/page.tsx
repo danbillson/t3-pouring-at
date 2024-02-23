@@ -1,10 +1,8 @@
-import type { Bar, BarBeverage, Beverage, Brewery } from "~/db/schema";
-import Map from "google-maps-react-markers";
+import type { BarWithBeverages } from "~/db/schema";
 import { BarPreview } from "~/components/bar-preview";
-import { Marker } from "~/components/marker";
 import { SearchForm } from "~/components/search-form";
 import { searchBars } from "~/db/queries";
-import { env } from "~/env.mjs";
+import { BarsMap } from "~/components/bar-map";
 
 type SearchQuery = {
   location: string;
@@ -41,36 +39,17 @@ export default async function Search({
               />
             ))}
           </div>
-          <div className="h-96 w-screen py-4">
-            <Map
-              apiKey={env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-              defaultCenter={{
-                lng: data.location.lng,
-                lat: data.location.lat,
-              }}
-              defaultZoom={13}
-            >
-              {bars.map((bar) => (
-                <Marker
-                  key={bar.id}
-                  bar={bar}
-                  lat={bar.latitude}
-                  lng={bar.longitude}
-                />
-              ))}
-            </Map>
-          </div>
+          <BarsMap
+            zoom={13}
+            lng={data.location.lng}
+            lat={data.location.lat}
+            bars={bars}
+          />
         </>
       ) : null}
     </>
   );
 }
-
-type BarWithBeverages = Bar & {
-  beverages: (BarBeverage & {
-    beverage: (Beverage & { brewery: Brewery | null }) | null;
-  })[];
-};
 
 const hasBeerStyle = (style?: string) => (bar: BarWithBeverages) => {
   if (!style) return true;

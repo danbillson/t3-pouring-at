@@ -1,11 +1,12 @@
 "use server";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { db, schema } from ".";
 import { z } from "zod";
 import { geocode } from "~/utils/maps";
 import { env } from "~/env.mjs";
 import { auth } from "@clerk/nextjs";
 import merge from "deepmerge";
+import { redirect } from "next/navigation";
 
 export async function verifyBar(id: string) {
   await db
@@ -219,9 +220,18 @@ export async function createBeverage(
   const barBeverage = await db.query.barBeverage.findFirst({
     where: (bb, { and, eq }) =>
       and(eq(bb.barId, input.barId), eq(bb.beverageId, beverage!.id)),
+    with: {
+      beverage: {
+        with: {
+          brewery: true,
+        },
+      },
+    },
   });
 
-  return { barBeverage };
+  if (!barBeverage) throw new Error("Failed to create bar beverage");
+
+  return barBeverage;
 }
 
 export async function untapBeverage(barId: string, beverageId: string) {
@@ -230,7 +240,7 @@ export async function untapBeverage(barId: string, beverageId: string) {
   await db
     .update(barBeverageSchema)
     .set({
-      tappedOff: new Date().toISOString(),
+      tappedOff: sql`CURRENT_TIMESTAMP(3)`,
     })
     .where(
       and(

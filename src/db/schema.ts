@@ -180,3 +180,9 @@ export type Brewery = typeof brewery.$inferSelect;
 export const breweryRelations = relations(brewery, ({ many }) => ({
   beverages: many(beverage),
 }));
+
+export type BarWithBeverages = Bar & {
+  beverages: (BarBeverage & {
+    beverage: (Beverage & { brewery: Brewery | null }) | null;
+  })[];
+};

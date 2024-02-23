@@ -13,6 +13,7 @@ import {
 } from "~/components/ui/card";
 import { useTransition } from "react";
 import { untapBeverage } from "~/db/mutations";
+import { useRouter } from "next/navigation";
 
 dayjs.extend(relativeTime);
 
@@ -27,9 +28,11 @@ type BeverageCardProps = {
 export const BeverageCard = ({ barBeverage, edit }: BeverageCardProps) => {
   const { barId, beverageId, beverage, tappedOn } = barBeverage;
   const [isLoading, startTransition] = useTransition();
+  const router = useRouter();
   const mutate = (barId: string, beverageId: string) => {
     startTransition(async () => {
       await untapBeverage(barId, beverageId);
+      router.refresh();
     });
   };
 

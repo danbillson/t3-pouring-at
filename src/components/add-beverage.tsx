@@ -16,7 +16,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { useTransition } from "react";
 import { createBeverage } from "~/db/mutations";
-import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   brewery: z.string().min(1, { message: "Please enter a brewery" }),
@@ -39,12 +39,16 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
-
+  const router = useRouter();
   const [isCreating, startTransition] = useTransition();
 
   const onSubmit = (data: FormValues) => {
+    form.reset();
     startTransition(async () => {
       await createBeverage({ barId: bar.id, ...data });
+      form.setFocus("brewery");
+      form.reset({ brewery: "", name: "", style: "", abv: 0 });
+      router.refresh();
     });
   };
 

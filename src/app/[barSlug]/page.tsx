@@ -4,7 +4,7 @@ import { getBarBySlug } from "~/db/queries";
 import Link from "next/link";
 import { BeverageList } from "~/components/beverage-list";
 import { Button } from "~/components/ui/button";
-import { BarMap } from "./map";
+import { BarsMap } from "~/components/bar-map";
 import { BarName } from "~/components/state";
 
 type Props = {
@@ -64,7 +64,7 @@ export default async function BarPage({ params }: Props) {
         </div>
       </main>
 
-      <BarMap bar={bar} />
+      <BarsMap bars={[bar]} zoom={17} lat={bar.latitude} lng={bar.longitude} />
     </>
   );
 }

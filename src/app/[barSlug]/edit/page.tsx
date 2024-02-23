@@ -1,15 +1,12 @@
 import { auth } from "@clerk/nextjs";
-import Map from "google-maps-react-markers";
 import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
-import { AddBeverage } from "~/components/add-beverage";
-import { BeverageList } from "~/components/beverage-list";
-import { Marker } from "~/components/marker";
 import { Button } from "~/components/ui/button";
 import { redirect } from "next/navigation";
 import { getBarBySlug } from "~/db/queries";
-import { BarMap } from "../map";
+import { BarsMap } from "~/components/bar-map";
 import { BarName } from "~/components/state";
+import { EditBarForm } from "./form";
 
 type Props = {
   params: { barSlug: string };
@@ -37,10 +34,6 @@ export default async function BarEdit({ params }: Props) {
     redirect("/");
   }
 
-  // if (isError) return <Layout>Sorry, something went wrong</Layout>;
-
-  // if (isLoading || !data) return <Layout>Pouring...</Layout>;
-
   return (
     <>
       <BarName name={bar.name} />
@@ -59,22 +52,11 @@ export default async function BarEdit({ params }: Props) {
               <Link href={`/${bar.slug}`}>Back</Link>
             </Button>
           </div>
-
-          <p className="mb-2 mt-8 font-bold">Add a new beverage</p>
-          <AddBeverage bar={bar} />
-
-          <h3 className="mt-8 text-xl font-bold">Tap list</h3>
-          {bar.beverages.length === 0 ? (
-            <p className="text-muted-foreground">
-              Nothing added yet, use the form above to add a beverage
-            </p>
-          ) : (
-            <BeverageList beverages={bar.beverages} edit />
-          )}
+          <EditBarForm bar={bar} />
         </div>
       </main>
 
-      <BarMap bar={bar} />
+      <BarsMap bars={[bar]} zoom={17} lat={bar.latitude} lng={bar.longitude} />
     </>
   );
 }
