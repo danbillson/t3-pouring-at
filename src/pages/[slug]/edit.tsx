@@ -8,7 +8,7 @@ import { BeverageList } from "~/components/beverage-list";
 import { Marker } from "~/components/marker";
 import { Button } from "~/components/ui/button";
 import { Layout } from "~/components/ui/layout";
-import { prisma } from "~/server/db";
+import { db, schema } from "~/db";
 import { api } from "~/utils/api";
 
 const BarEdit: NextPage<{ slug: string }> = ({ slug }) => {
@@ -86,15 +86,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const slug = context.params?.slug as string;
-  const bar = await prisma.bar.findFirst({
-    where: {
-      slug,
-      staff: {
-        some: {
-          staffId: userId,
-        },
-      },
-    },
+  const bar = await db.query.bar.findFirst({
+    where: (bar, { eq, exists, and }) =>
+      and(
+        eq(bar.slug, slug),
+        exists(
+          db
+            .select()
+            .from(schema.barStaff)
+            .where(
+              and(
+                eq(schema.barStaff.barId, bar.id),
+                eq(schema.barStaff.staffId, userId),
+              ),
+            ),
+        ),
+      ),
   });
 
   if (!bar) {

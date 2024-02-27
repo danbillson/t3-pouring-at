@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ColourPicker } from "~/components/colour-picker";
 import { Button } from "~/components/ui/button";
 import { Layout } from "~/components/ui/layout";
-import { prisma } from "~/server/db";
+import { db, schema } from "~/db";
 import { api } from "~/utils/api";
 
 type Branding = {
@@ -23,7 +23,7 @@ const BarBranding: NextPage<{ slug: string }> = ({ slug }) => {
   const { mutate, isLoading: isUpdating } = api.bars.updateBranding.useMutation(
     {
       onSettled: () => {
-        refetch();
+        void refetch();
       },
     },
   );
@@ -124,15 +124,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const slug = context.params?.slug as string;
-  const bar = await prisma.bar.findFirst({
-    where: {
-      slug,
-      staff: {
-        some: {
-          staffId: userId,
-        },
-      },
-    },
+
+  const bar = await db.query.bar.findFirst({
+    where: (bar, { eq, exists, and }) =>
+      and(
+        eq(bar.slug, slug),
+        exists(
+          db
+            .select()
+            .from(schema.barStaff)
+            .where(
+              and(
+                eq(schema.barStaff.barId, bar.id),
+                eq(schema.barStaff.staffId, userId),
+              ),
+            ),
+        ),
+      ),
   });
 
   if (!bar) {
