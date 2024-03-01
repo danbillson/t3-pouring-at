@@ -3,6 +3,7 @@ import { Providers } from "./providers";
 import { Footer } from "~/components/ui/footer";
 import { type Metadata } from "next";
 import "~/styles/globals.css";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Pouring at",
@@ -19,7 +20,9 @@ export default function RootLayout({
       <body>
         <Providers>
           <div className="min-h-screen bg-background font-sans antialiased">
-            <Header />
+            <Suspense>
+              <Header />
+            </Suspense>
             {children}
             <Footer />
           </div>

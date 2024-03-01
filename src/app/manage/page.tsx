@@ -1,7 +1,5 @@
-import { auth, useAuth } from "@clerk/nextjs";
-import { Plus } from "lucide-react";
+import { auth,  } from "@clerk/nextjs";
 import Link from "next/link";
-import { LoadingBar } from "~/components/loading";
 import { Button } from "~/components/ui/button";
 import {
   Card,

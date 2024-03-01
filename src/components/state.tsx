@@ -1,7 +1,6 @@
 "use client";
 import { useEffect } from "react";
 import { create } from "zustand";
-import { Bar } from "~/db/schema";
 
 type BarState = {
   barName: string;

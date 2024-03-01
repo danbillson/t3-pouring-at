@@ -6,7 +6,6 @@ import { geocode } from "~/utils/maps";
 import { env } from "~/env.mjs";
 import { auth } from "@clerk/nextjs";
 import merge from "deepmerge";
-import { redirect } from "next/navigation";
 
 export async function verifyBar(id: string) {
   await db
