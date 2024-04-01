@@ -11,7 +11,7 @@ import { Input } from "~/components/ui/input";
 import { cities } from "~/data/gb";
 
 const schema = z.object({
-  location: z.string().trim().nonempty({ message: "Please enter a location" }),
+  location: z.string().trim().min(1, { message: "Please enter a location" }),
   style: z.string().trim().optional(),
   brewery: z.string().trim().optional(),
 });
@@ -33,8 +33,7 @@ export const SearchForm = ({ loading }: SearchFormProps) => {
 
   const onSubmit = ({ location, style, brewery }: FormValues) => {
     void router.push(
-      `/search?location=${encodeURIComponent(location)}${
-        style ? `&style=${encodeURIComponent(style)}` : ""
+      `/search?location=${encodeURIComponent(location)}${style ? `&style=${encodeURIComponent(style)}` : ""
       }${brewery ? `&brewery=${encodeURIComponent(brewery)}` : ""}`,
     );
   };
