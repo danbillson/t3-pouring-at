@@ -1,3 +1,4 @@
+"use client";
 import { type Bar } from "~/db/schema";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import * as HoverCard from "@radix-ui/react-hover-card";

@@ -1,4 +1,9 @@
-import type { Bar, BarBeverage, Beverage, Brewery } from "~/db/schema";
+import type {
+  BarWithBeverages,
+  BarBeverage,
+  Beverage,
+  Brewery,
+} from "~/db/schema";
 import { getDistance } from "geolib";
 import Link from "next/link";
 import {
@@ -10,12 +15,6 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-
-type BarWithBeverages = Bar & {
-  beverages: (BarBeverage & {
-    beverage: (Beverage & { brewery: Brewery | null }) | null;
-  })[];
-};
 
 type BarPreviewProps = {
   bar: BarWithBeverages;

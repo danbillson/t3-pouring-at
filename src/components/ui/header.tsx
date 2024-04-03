@@ -1,17 +1,17 @@
+"use client";
 import { useAuth } from "@clerk/nextjs";
 import { Beer } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { LoggedInDropdown } from "~/components/logged-in-dropdown";
 import { ModeToggle } from "~/components/mode-toggle";
-import { api } from "~/utils/api";
+import { useBarStore } from "~/components/state";
 
 export const Header = () => {
   const { isSignedIn } = useAuth();
-  const router = useRouter();
-  const slug = router.query.slug as string;
-  const { data } = api.bars.getBySlug.useQuery({ slug }, { enabled: !!slug });
-
+  const params = useParams<{ barSlug: string }>();
+  const barName = useBarStore((state) => state.barName);
+  const pouringAtLocation = params?.barSlug && barName ? barName : "...";
   return (
     <header className="container flex justify-between p-8">
       <div className="flex items-center gap-6 text-muted-foreground">
@@ -20,7 +20,7 @@ export const Header = () => {
             href="/"
             className="text-l mr-2 hidden font-bold text-foreground sm:inline-block"
           >
-            Pouring at {data?.bar.name || "..."}
+            Pouring at {pouringAtLocation}
           </Link>
           <Link href="/" className="font-bold text-foreground sm:hidden">
             <Beer className="mr-2 inline-block" />

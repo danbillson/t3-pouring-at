@@ -1,10 +1,8 @@
-import type { BarBeverage, Beverage, Brewery } from "~/db/schema";
+import type { BarWithBeverages } from "~/db/schema";
 import { BeverageCard } from "~/components/beverage-card";
 
 type BeverageListProps = {
-  beverages: (BarBeverage & {
-    beverage: (Beverage & { brewery: Brewery | null }) | null;
-  })[];
+  beverages: BarWithBeverages["beverages"];
   edit?: boolean;
 };
 

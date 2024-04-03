@@ -1,3 +1,4 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Bar } from "~/db/schema";
 import { useForm } from "react-hook-form";
@@ -13,14 +14,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { api } from "~/utils/api";
+import { useTransition } from "react";
+import { createBeverage } from "~/db/mutations";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
-  brewery: z.string().nonempty({ message: "Please enter a brewery" }),
-  name: z
-    .string()
-    .nonempty({ message: "Please enter the name of the beverage" }),
-  style: z.string().nonempty({ message: "Please enter a style" }),
+  brewery: z.string().min(1, { message: "Please enter a brewery" }),
+  name: z.string().min(1, { message: "Please enter the name of the beverage" }),
+  style: z.string().min(1, { message: "Please enter a style" }),
   abv: z
     .number()
     .nonnegative({ message: "Please enter a valid ABV" })
@@ -38,17 +39,17 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
-  const ctx = api.useContext();
-  const { mutate, isLoading: isCreating } = api.barBeverage.create.useMutation({
-    onSuccess: () => {
-      form.setFocus("brewery");
-      form.reset({ brewery: "", name: "", style: "", abv: 0 });
-      void ctx.bars.getBySlug.invalidate();
-    },
-  });
+  const router = useRouter();
+  const [isCreating, startTransition] = useTransition();
 
   const onSubmit = (data: FormValues) => {
-    mutate({ ...data, barId: bar.id });
+    form.reset();
+    startTransition(async () => {
+      await createBeverage({ barId: bar.id, ...data });
+      form.setFocus("brewery");
+      form.reset({ brewery: "", name: "", style: "", abv: 0 });
+      router.refresh();
+    });
   };
 
   return (
@@ -56,7 +57,7 @@ export const AddBeverage = ({ bar }: AddBeverageProps) => {
       <form
         className="mx-auto grid w-full grid-cols-1 gap-4 lg:grid-cols-2"
         /* eslint-disable-next-line */
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(val) => void form.handleSubmit(onSubmit)(val)}
       >
         <Field name="brewery" label="Brewery" control={form.control}>
           <Input placeholder="Full Circle" autoComplete="off" />

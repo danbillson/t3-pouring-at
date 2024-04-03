@@ -1,6 +1,7 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/router";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
@@ -10,7 +11,7 @@ import { Input } from "~/components/ui/input";
 import { cities } from "~/data/gb";
 
 const schema = z.object({
-  location: z.string().trim().nonempty({ message: "Please enter a location" }),
+  location: z.string().trim().min(1, { message: "Please enter a location" }),
   style: z.string().trim().optional(),
   brewery: z.string().trim().optional(),
 });
@@ -18,12 +19,13 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 type SearchFormProps = {
-  defaultValues?: FormValues;
   loading?: boolean;
 };
 
-export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
+export const SearchForm = ({ loading }: SearchFormProps) => {
   const router = useRouter();
+  const defaultValues = useParams<FormValues>() ?? undefined;
+
   const form = useForm<FormValues>({
     defaultValues,
     resolver: zodResolver(schema),
@@ -31,9 +33,8 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
 
   const onSubmit = ({ location, style, brewery }: FormValues) => {
     void router.push(
-      `/search?location=${encodeURIComponent(location)}${
-        style ? `&style=${encodeURIComponent(style)}` : ""
-      }${brewery ? `&brewery=${encodeURIComponent(brewery)}` : ""}`
+      `/search?location=${encodeURIComponent(location)}${style ? `&style=${encodeURIComponent(style)}` : ""
+      }${brewery ? `&brewery=${encodeURIComponent(brewery)}` : ""}`,
     );
   };
 
@@ -41,8 +42,7 @@ export const SearchForm = ({ defaultValues, loading }: SearchFormProps) => {
     <Form {...form}>
       <form
         className="mx-auto grid w-full grid-cols-1 gap-4 px-4 md:grid-cols-2"
-        /* eslint-disable-next-line */
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => void form.handleSubmit(onSubmit)(e)}
       >
         <Field
           name="location"
